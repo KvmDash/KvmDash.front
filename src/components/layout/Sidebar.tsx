@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+
+// mui
 import { List, Box, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, Divider, Toolbar, Collapse } from '@mui/material';
-import { sidebarStyles } from '@theme/components/SidebarStyles'
 import Drawer from '@mui/material/Drawer';
 
 // MUI Icons
@@ -15,20 +16,21 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import StorageIcon from '@mui/icons-material/Storage';
 import LogoutIcon from '@mui/icons-material/Logout';
 
+// Components
+import { sidebarStyles } from '@theme/components/SidebarStyles'
+
 // KVMDash Logo
 import KvmLogo from '@assets/kvmdash.svg';
 
-// Types
-import { type VMData, type VirtualMachine } from '@interfaces/vm.types';
-import { TokenStorage } from '../../services/tokenStorage'
+// types and interfaces
+import { VMResponse } from '@interfaces/vm.types';
+
+// Services
+import { getVirtualMachines } from '@services/virtualization';
+import { TokenStorage } from '@services/tokenStorage'
+
 
 const drawerWidth = 240;
-
-const dummyVMs: VirtualMachine = {
-    'ubuntu-server': { 'state.state': '1' },
-    'debian-test': { 'state.state': '0' },
-    'windows-dev': { 'state.state': '1' }
-};
 
 interface SidebarProps {
     open: boolean;
@@ -37,10 +39,29 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
     const [openVm, setOpenVm] = useState(false);
+    const [vms, setVms] = useState<VMResponse[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const fetchVMs = async () => {
+            try {
+                const vmList = await getVirtualMachines();
+                setVms(vmList);
+            } catch (err) {
+                setError('Failed to load VMs');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchVMs();
+    }, []);
+
     const handleLogout = () => {
-        TokenStorage.removeToken(); 
+        TokenStorage.removeToken();
         navigate('/login');
     };
 
@@ -51,8 +72,22 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
         setOpenVm(!openVm);
     };
 
-    const getVmStatusColor = (vmData: VMData): string => {
-        return vmData['state.state'] === '1' ? 'green' : 'grey';
+    /**
+     * Bestimmt die Farbe des VM-Icons basierend auf dem Status
+     * @param state - Status der VM als Nummer
+     * @returns MUI Farb-String (success.main, warning.main, etc.)
+     */
+    const getVmStatusColor = (state: number): string => {
+        switch (state) {
+            case 1:
+                return 'success.main';  // Grün = VM läuft
+            case 3:
+                return 'warning.main';  // Orange = VM pausiert
+            case 5:
+                return 'error.main';    // Rot = VM heruntergefahren
+            default:
+                return 'text.disabled'; // Grau = Status unbekannt
+        }
     };
 
     return (
@@ -109,17 +144,25 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                 {open && (
                     <Collapse in={openVm} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                            {Object.entries(dummyVMs).map(([vmName, vmData]) => (
-                                <ListItem key={vmName} disablePadding>
+                            {loading ? (
+                                <ListItem>
+                                    <ListItemText primary="Loading..." />
+                                </ListItem>
+                            ) : error ? (
+                                <ListItem>
+                                    <ListItemText primary={error} sx={{ color: 'error.main' }} />
+                                </ListItem>
+                            ) : vms.map((vm) => (
+                                <ListItem key={vm.name} disablePadding>
                                     <ListItemButton
                                         component={Link}
-                                        to={`/vm/${vmName}`}
+                                        to={`/vm/${vm.name}`}
                                         sx={{ pl: 4 }}
                                     >
                                         <ListItemIcon>
-                                            <ComputerIcon sx={{ color: getVmStatusColor(vmData) }} />
+                                            <ComputerIcon sx={{ color: getVmStatusColor(vm.state) }} />
                                         </ListItemIcon>
-                                        <ListItemText primary={vmName} />
+                                        <ListItemText primary={vm.name} />
                                     </ListItemButton>
                                 </ListItem>
                             ))}
@@ -139,9 +182,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
 
             <List sx={{ marginTop: 'auto' }}>
                 <ListItem key="logout" disablePadding>
-                    <ListItemButton 
+                    <ListItemButton
                         onClick={handleLogout}
-                        sx={{ 
+                        sx={{
                             justifyContent: open ? 'initial' : 'center',
                             color: 'error.main'
                         }}

@@ -14,7 +14,8 @@
         "@components/*": ["components/*"],
         "@assets/*": ["assets/*"],
         "@interfaces/*": ["types/*"],    
-        "@theme/*": ["theme/*"]
+        "@theme/*": ["theme/*"],
+        "@services/*": ["services/*"]   
       }
     }
 }

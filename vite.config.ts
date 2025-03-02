@@ -11,7 +11,8 @@ export default defineConfig({
         '@components': path.resolve(__dirname, './src/components'),
         '@assets': path.resolve(__dirname, './src/assets'),
         '@interfaces': path.resolve(__dirname, './src/types'),  // Geändert von @types zu @interfaces
-        '@theme': path.resolve(__dirname, './src/theme')
+        '@theme': path.resolve(__dirname, './src/theme'),
+        '@services': path.resolve(__dirname, './src/services')
       },
 },
   server: {
