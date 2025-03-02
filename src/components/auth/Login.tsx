@@ -12,18 +12,12 @@ export const Login = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        setError('')
-
-        // Validierung der Eingabefelder
-        if (!email || !password) {
-            setError('Bitte E-Mail und Passwort eingeben')
-            return
-        }
-
+        
         try {
             const response: LoginResponse = await login(email, password)
             if (response.token) {
-                TokenStorage.setToken(response.token)
+                // Token speichern
+                TokenStorage.setToken(response.token);
                 navigate('/')
             } else {
                 setError('Login fehlgeschlagen')
