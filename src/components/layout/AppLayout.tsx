@@ -26,7 +26,7 @@ export const AppLayout = () => {
             <main style={{
                 flexGrow: 1,
                 padding: '20px',
-                marginLeft: open ? 240 : 64,
+                marginLeft: 64,
                 transition: 'margin 0.3s'
             }}>
                 <Outlet />
