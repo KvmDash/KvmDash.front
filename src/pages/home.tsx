@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material'
+import { HostInfo } from '@components/host/HostInfo'    
 
 export default function Home() {
     return (
@@ -6,6 +7,8 @@ export default function Home() {
             <Typography variant="h4" component="h1" gutterBottom>
                 Home
             </Typography>
+            <HostInfo />
+            
         </Box>
     )
 }
