@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material'
-import { HostInfo } from '@components/host/HostInfo'    
+import { HostInfo } from '@components/host/HostInfo'   
+import CpuInfo from '@/components/host/CpuInfo' 
 
 export default function Home() {
     return (
@@ -8,7 +9,7 @@ export default function Home() {
                 Home
             </Typography>
             <HostInfo />
-            
+            <CpuInfo />
         </Box>
     )
 }
