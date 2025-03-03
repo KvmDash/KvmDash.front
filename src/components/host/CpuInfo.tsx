@@ -15,18 +15,6 @@ const getUsageColor = (usage: number): string => {
     return '#00c853';                     // Grün bei niedriger Last
 };
 
-/**
- * Generiert Dummy-CPU-Daten für die Entwicklung
- */
-const generateDummyCpuData = (): CpuData[] => {
-    return Array.from({ length: 8 }, (_, i) => ({
-        cpu: `cpu${i}`,
-        total: 100,
-        idle: Math.random() * 40,
-        used: Math.random() * 60,
-        usage: Math.random() * 100
-    }));
-};
 
 export const CpuInfo = () => {
     const [cpuData, setCpuData] = useState<CpuData[]>([]);
