@@ -1,66 +1,65 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, Box, Typography, LinearProgress } from "@mui/material";
+import { Card, CardContent, CardHeader, Box, Typography, LinearProgress, Alert } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import { MemData } from '@interfaces/host.types';
+import { getMemInfo } from '@services/host';
 
-/**
- * Konvertiert Speichereinheiten in GB
- */
-const convertToGB = (value: string): number => {
-    const unit = value.slice(-2);
-    const num = parseFloat(value.slice(0, -2));
-    switch (unit) {
-        case 'Ti': return num * 1024;
-        case 'Gi': return num;
-        case 'Mi': return num / 1024;
-        case 'Ki': return num / (1024 * 1024);
-        default: return num;
-    }
-};
 
-/**
- * Generiert Dummy-Speicherdaten für die Entwicklung
- */
-const generateDummyMemData = (): MemData => ({
-    total: "32Gi",
-    used: `${Math.floor(Math.random() * 20)}Gi`,
-    available: "12Gi"
-});
 
 export const MemInfo = () => {
     const [memData, setMemData] = useState<MemData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        // Simuliere API-Aufruf
-        const timer = setTimeout(() => {
-            setMemData(generateDummyMemData());
-            setLoading(false);
-        }, 1000);
-
-        // Simuliere Polling
-        const interval = setInterval(() => {
-            setMemData(generateDummyMemData());
-        }, 5000);
-
-        return () => {
-            clearTimeout(timer);
-            clearInterval(interval);
+        const fetchMemInfo = async () => {
+            try {
+                const data = await getMemInfo();
+                setMemData(data);
+                setError(null);
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'Unbekannter Fehler');
+                console.error('Fehler beim Laden der Speicher-Informationen:', err);
+            } finally {
+                setLoading(false);
+            }
         };
+
+        fetchMemInfo();
+
+        // Aktualisierung alle 5 Sekunden
+        const interval = setInterval(fetchMemInfo, 5000);
+        return () => clearInterval(interval);
     }, []);
 
+
+    // Prozentsatz des benutzten Speichers berechnen
+    const getUsedPercentage = () => {
+        if (!memData) return 0;
+        // Entferne 'G' und konvertiere zu number
+        const total = parseFloat(memData.total.replace('G', ''));
+        const used = parseFloat(memData.used.replace('G', ''));
+        return (used / total) * 100;
+    };
+
+
     if (loading) {
-        return <Typography>Loading...</Typography>;
+        return (
+            <Box display="flex" justifyContent="center" p={2}>
+                <LinearProgress />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return <Alert severity="error">{error}</Alert>;
     }
 
     if (!memData) {
         return null;
     }
 
-    const totalGB = convertToGB(memData.total);
-    const usedGB = convertToGB(memData.used);
-    const availableGB = convertToGB(memData.available);
-    const usedPercentage = (usedGB / totalGB) * 100;
+
 
     return (
         <Box sx={{ flexGrow: 1, p: 4 }}>
@@ -68,45 +67,41 @@ export const MemInfo = () => {
                 <CardHeader title="Speicherinformationen" />
                 <CardContent>
                     <Grid container spacing={2}>
-                        <Grid size={{xs:12}}>
-                            <Typography variant="body2" sx={{ mb: 1 }}>
-                                Gesamtspeicher: {memData.total}
+                        <Grid size={{ xs: 12 }}>
+                            <Typography variant="body2" color="textSecondary">
+                                Speichernutzung
                             </Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mb: 2 }}>
-                                <Box sx={{ width: '100%', mr: 1, position: 'relative' }}>
+                                <Box sx={{ width: '100%', mr: 1 }}>
                                     <LinearProgress
                                         variant="determinate"
-                                        value={100}
+                                        value={getUsedPercentage()}
                                         sx={{
-                                            height: 8,
-                                            borderRadius: 4,
-                                            backgroundColor: 'transparent',
+                                            height: 10,
+                                            borderRadius: 5,
+                                            backgroundColor: '#00c853', // Grüner Hintergrund für freien Speicher
                                             '& .MuiLinearProgress-bar': {
-                                                backgroundColor: '#00c853'
+                                                backgroundColor: '#ff4444'  // Roter Balken für belegten Speicher
                                             }
                                         }}
                                     />
-                                    <LinearProgress
-                                        variant="determinate"
-                                        value={usedPercentage}
-                                        sx={{
-                                            height: 8,
-                                            borderRadius: 4,
-                                            backgroundColor: 'transparent',
-                                            '& .MuiLinearProgress-bar': {
-                                                backgroundColor: '#ff4444'
-                                            },
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            width: '100%'
-                                        }}
-                                    />
                                 </Box>
+                                <Typography variant="body2" sx={{ minWidth: 45 }}>
+                                    {getUsedPercentage().toFixed(1)}%
+                                </Typography>
                             </Box>
-                            <Typography variant="body2">
-                                Verfügbar: {availableGB.toFixed(1)} GiB (Gesamt: {totalGB.toFixed(1)} GiB, Belegt: {usedGB.toFixed(1)} GiB)
-                            </Typography>
+                            <Grid container spacing={1}>
+                                {[
+                                    { label: 'Gesamt', value: memData?.total },
+                                    { label: 'Verwendet', value: memData?.used },
+                                    { label: 'Verfügbar', value: memData?.available }
+                                ].map(({ label, value }) => (
+                                    <Grid size={{ xs: 6, md: 4 }} key={label}>
+                                        <Typography variant="body2" color="textSecondary">{label}</Typography>
+                                        <Typography variant="body1">{value || 'N/A'}</Typography>
+                                    </Grid>
+                                ))}
+                            </Grid>
                         </Grid>
                     </Grid>
                 </CardContent>
