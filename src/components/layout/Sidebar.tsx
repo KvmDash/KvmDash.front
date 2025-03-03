@@ -70,6 +70,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
             toggleDrawer();
         }
         setOpenVm(!openVm);
+        navigate('/vm'); 
     };
 
     /**
