@@ -13,19 +13,22 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { CreateForm } from '@components/vm/CreateForm';
-import type { VmFormData } from '../types/vm.types';
+import type { VmFormData } from '@interfaces/vm.types';
 
 // Dummy-Daten für VMs
+// Dummy-Daten für VMs erweitern
 const dummyVms = {
     'test-vm-1': {
         'state.state': '1',
         'balloon.current': '4194304',
-        'vcpu.current': '2'
+        'vcpu.current': '2',
+        'ip': '192.168.1.100'
     },
     'test-vm-2': {
         'state.state': '5',
         'balloon.current': '8388608',
-        'vcpu.current': '4'
+        'vcpu.current': '4',
+        'ip': '192.168.1.101'
     }
 };
 
@@ -106,6 +109,9 @@ export default function VmContent(): JSX.Element {
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         vCPUs: {vmData['vcpu.current']}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        IP: {vmData['ip'] || 'Nicht verfügbar'}
                                     </Typography>
                                 </CardContent>
                                 <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
