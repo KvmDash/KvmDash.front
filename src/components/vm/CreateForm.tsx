@@ -14,6 +14,7 @@ import Grid from '@mui/material/Grid2';
 import { VmFormData } from '@interfaces/vm.types';
 import { NetworkOption, IsoFile } from '@interfaces/qemu.types';
 import { getNetworks, getOsVariants, getIsoImages, DEFAULT_OS_VARIANT } from '@/services/qemu';
+import { createVirtualMachine } from '@/services/virtualization';
 
 
 
@@ -79,9 +80,16 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent): void => {
+    const handleSubmit = async (e: React.FormEvent): Promise<void> => {
         e.preventDefault();
-        onSubmit(formData);
+        try {
+            const success = await createVirtualMachine(formData);
+            if (success) {
+                onSubmit(formData);
+            }
+        } catch (error) {
+            console.error('Fehler beim Erstellen der VM:', error);
+        }
     };
 
     return (
