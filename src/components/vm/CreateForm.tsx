@@ -13,7 +13,7 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import Grid from '@mui/material/Grid2';
 import { VmFormData } from '@interfaces/vm.types';
 import { NetworkOption, IsoFile } from '@interfaces/qemu.types';
-import { getNetworks } from '@/services/qemu';
+import { getNetworks, getOsVariants, DEFAULT_OS_VARIANT } from '@/services/qemu';
 
 const dummyIsoFiles: IsoFile[] = [
     { name: 'Ubuntu 22.04 LTS', path: '/iso/ubuntu-22.04-desktop-amd64.iso' },
@@ -22,15 +22,6 @@ const dummyIsoFiles: IsoFile[] = [
 ];
 
 
-
-const dummyOsVariants: string[] = [
-    'ubuntu22.04',
-    'debian12',
-    'win2k22',
-    'linux2022',
-    'windows10'
-];
-
 const initialFormData: VmFormData = {
     name: '',
     memory: 2048,
@@ -38,7 +29,7 @@ const initialFormData: VmFormData = {
     disk_size: 20,
     iso_image: dummyIsoFiles[0].path,
     network_bridge: '',
-    os_variant: 'linux2022'
+    os_variant: DEFAULT_OS_VARIANT
 };
 
 interface CreateVmFormProps {
@@ -50,21 +41,35 @@ interface CreateVmFormProps {
 export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
     const [formData, setFormData] = useState<VmFormData>(initialFormData);
     const [networkOptions, setNetworkOptions] = useState<NetworkOption[]>([]);
+    const [osVariants, setOsVariants] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const loadNetworks = async () => {
+        const loadData = async () => {
             try {
-                const networks = await getNetworks();
+                const [networks, variants] = await Promise.all([
+                    getNetworks(),
+                    getOsVariants()
+                ]);
+
                 setNetworkOptions(networks);
+                setOsVariants(variants);
+
+                // Default OS-Variante setzen
+                if (variants.length > 0) {
+                    setFormData(prev => ({
+                        ...prev,
+                        os_variant: variants[0]
+                    }));
+                }
             } catch (error) {
-                console.error('Fehler beim Laden der Netzwerke:', error);
+                console.error('Fehler beim Laden der Daten:', error);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        loadNetworks();
+        loadData();
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -187,19 +192,22 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                         <Grid size={{ xs: 12 }}>
                             <Autocomplete
                                 fullWidth
-                                options={dummyOsVariants}
+                                options={osVariants}
                                 value={formData.os_variant}
                                 onChange={(event, newValue) => {
                                     setFormData(prev => ({
                                         ...prev,
-                                        os_variant: newValue || 'linux2022'
+                                        os_variant: newValue || ''
                                     }));
                                 }}
+                                loading={isLoading}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
                                         label="Betriebssystem"
                                         required
+                                        error={isLoading}
+                                        helperText={isLoading ? 'Lade Betriebssysteme...' : ''}
                                     />
                                 )}
                             />
