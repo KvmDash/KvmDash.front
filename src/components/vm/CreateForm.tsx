@@ -11,7 +11,9 @@ import {
 } from '@mui/material';
 import ComputerIcon from '@mui/icons-material/Computer';
 import Grid from '@mui/material/Grid2';
-import { VmFormData, IsoFile, NetworkOption } from '@interfaces/vm.types';
+import { VmFormData } from '@interfaces/vm.types';
+import { NetworkOption, IsoFile } from '@interfaces/qemu.types';
+import { getNetworks } from '@/services/qemu';
 
 const dummyIsoFiles: IsoFile[] = [
     { name: 'Ubuntu 22.04 LTS', path: '/iso/ubuntu-22.04-desktop-amd64.iso' },
@@ -19,10 +21,7 @@ const dummyIsoFiles: IsoFile[] = [
     { name: 'Windows Server 2022', path: '/iso/windows-server-2022.iso' }
 ];
 
-const dummyNetworkOptions: NetworkOption[] = [
-    { name: 'Default NAT Network', value: 'virbr0', type: 'nat', active: true },
-    { name: 'Bridge Network', value: 'br0', type: 'bridge', active: true }
-];
+
 
 const dummyOsVariants: string[] = [
     'ubuntu22.04',
@@ -38,7 +37,7 @@ const initialFormData: VmFormData = {
     vcpus: 2,
     disk_size: 20,
     iso_image: dummyIsoFiles[0].path,
-    network_bridge: dummyNetworkOptions[0].value,
+    network_bridge: '',
     os_variant: 'linux2022'
 };
 
@@ -46,17 +45,26 @@ interface CreateVmFormProps {
     onSubmit: (data: VmFormData) => void;
 }
 
+
+
 export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
     const [formData, setFormData] = useState<VmFormData>(initialFormData);
+    const [networkOptions, setNetworkOptions] = useState<NetworkOption[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Simuliere API-Ladezeit
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 1000);
+        const loadNetworks = async () => {
+            try {
+                const networks = await getNetworks();
+                setNetworkOptions(networks);
+            } catch (error) {
+                console.error('Fehler beim Laden der Netzwerke:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-        return () => clearTimeout(timer);
+        loadNetworks();
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -137,15 +145,21 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                 value={formData.network_bridge}
                                 onChange={handleChange}
                                 required
+                                disabled={isLoading}
                             >
-                                {dummyNetworkOptions.map((option) => (
-                                    <MenuItem
-                                        key={option.value}
-                                        value={option.value}
-                                    >
-                                        {option.name}
-                                    </MenuItem>
-                                ))}
+                                {isLoading ? (
+                                    <MenuItem disabled>Lade Netzwerke...</MenuItem>
+                                ) : (
+                                    networkOptions.map((option) => (
+                                        <MenuItem
+                                            key={option.value}
+                                            value={option.value}
+                                            disabled={!option.active}
+                                        >
+                                            {option.name}
+                                        </MenuItem>
+                                    ))
+                                )}
                             </TextField>
                         </Grid>
                         <Grid size={{ xs: 12 }}>
@@ -182,8 +196,8 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                     }));
                                 }}
                                 renderInput={(params) => (
-                                    <TextField 
-                                        {...params} 
+                                    <TextField
+                                        {...params}
                                         label="Betriebssystem"
                                         required
                                     />
