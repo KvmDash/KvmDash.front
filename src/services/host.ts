@@ -1,5 +1,5 @@
 import { SystemInfo, CpuData, MemData, DiskData } from '@interfaces/host.types';
-
+import { handleApiError } from '@services/auth/handleApiError';
 
 
 /**
@@ -33,10 +33,7 @@ export const getSystemInfo = async (): Promise<SystemInfo> => {
 
         return response.json();
     } catch (error) {
-        console.error('Netzwerk oder Parse Fehler:', error);
-        throw error instanceof Error 
-            ? error 
-            : new Error('Fehler beim Abrufen der Systeminformationen');
+        return handleApiError(error);
     }
 };
 
@@ -72,10 +69,7 @@ export const getCpuInfo = async (): Promise<CpuData[]> => {
 
         return response.json();
     } catch (error) {
-        console.error('Netzwerk oder Parse Fehler:', error);
-        throw error instanceof Error 
-            ? error 
-            : new Error('Fehler beim Abrufen der CPU-Informationen');
+        return handleApiError(error);
     }
 };
 
@@ -113,10 +107,7 @@ export const getMemInfo = async (): Promise<MemData> => {
 
         return response.json();
     } catch (error) {
-        console.error('Netzwerk oder Parse Fehler:', error);
-        throw error instanceof Error 
-            ? error 
-            : new Error('Fehler beim Abrufen der Speicher-Informationen');
+        return handleApiError(error);
     }
 };
 
@@ -153,9 +144,6 @@ export const getDiskInfo = async (): Promise<DiskData[]> => {
 
         return response.json();
     } catch (error) {
-        console.error('Netzwerk oder Parse Fehler:', error);
-        throw error instanceof Error 
-            ? error 
-            : new Error('Fehler beim Abrufen der Festplatten-Informationen');
+        return handleApiError(error);
     }
 };

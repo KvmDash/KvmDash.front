@@ -1,5 +1,5 @@
 import { VMResponse } from '@interfaces/vm.types';
-
+import { handleApiError } from '@services/auth/handleApiError';
 
 /**
  * Holt die Liste aller virtuellen Maschinen vom Backend
@@ -13,17 +13,21 @@ export const getVirtualMachines = async (): Promise<VMResponse[]> => {
         throw new Error('Kein Auth-Token gefunden');
     }
     
-    const response = await fetch('/api/virt/domains', {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+    try {
+        const response = await fetch('/api/virt/domains', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw { status: response.status, message: 'VM-Daten konnten nicht geladen werden' };
         }
-    });
 
-    if (!response.ok) {
-        throw new Error('VM-Daten konnten nicht geladen werden');
+        const data = await response.json();
+        return data.domains;
+    } catch (error) {
+        return handleApiError(error);
     }
-
-    const data = await response.json();
-    return data.domains;
 };
