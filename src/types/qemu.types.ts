@@ -24,4 +24,5 @@ export interface IsoStatus {
 export interface IsoFile {
     name: string;    // Anzeigename der ISO
     path: string;    // Dateipfad im System
+    size: number;     // Größe der ISO
 }

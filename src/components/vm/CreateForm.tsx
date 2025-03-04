@@ -13,24 +13,21 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import Grid from '@mui/material/Grid2';
 import { VmFormData } from '@interfaces/vm.types';
 import { NetworkOption, IsoFile } from '@interfaces/qemu.types';
-import { getNetworks, getOsVariants, DEFAULT_OS_VARIANT } from '@/services/qemu';
-
-const dummyIsoFiles: IsoFile[] = [
-    { name: 'Ubuntu 22.04 LTS', path: '/iso/ubuntu-22.04-desktop-amd64.iso' },
-    { name: 'Debian 12', path: '/iso/debian-12.0.0-amd64-netinst.iso' },
-    { name: 'Windows Server 2022', path: '/iso/windows-server-2022.iso' }
-];
+import { getNetworks, getOsVariants, getIsoImages, DEFAULT_OS_VARIANT } from '@/services/qemu';
 
 
+
+// initialFormData
 const initialFormData: VmFormData = {
     name: '',
     memory: 2048,
     vcpus: 2,
     disk_size: 20,
-    iso_image: dummyIsoFiles[0].path,
+    iso_image: '',
     network_bridge: '',
     os_variant: DEFAULT_OS_VARIANT
 };
+
 
 interface CreateVmFormProps {
     onSubmit: (data: VmFormData) => void;
@@ -43,25 +40,27 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
     const [networkOptions, setNetworkOptions] = useState<NetworkOption[]>([]);
     const [osVariants, setOsVariants] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isoFiles, setIsoFiles] = useState<IsoFile[]>([]);
 
     useEffect(() => {
         const loadData = async () => {
             try {
-                const [networks, variants] = await Promise.all([
+                const [networks, variants, isos] = await Promise.all([
                     getNetworks(),
-                    getOsVariants()
+                    getOsVariants(),
+                    getIsoImages()
                 ]);
 
                 setNetworkOptions(networks);
                 setOsVariants(variants);
+                setIsoFiles(isos);
 
-                // Default OS-Variante setzen
-                if (variants.length > 0) {
-                    setFormData(prev => ({
-                        ...prev,
-                        os_variant: variants[0]
-                    }));
-                }
+                // Standardwerte setzen
+                setFormData(prev => ({
+                    ...prev,
+                    os_variant: variants[0],
+                    iso_image: isos[0]?.path || '' // Erste ISO wenn verfügbar
+                }));
             } catch (error) {
                 console.error('Fehler beim Laden der Daten:', error);
             } finally {
@@ -181,9 +180,9 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                 {isLoading ? (
                                     <MenuItem disabled>Lade ISO-Dateien...</MenuItem>
                                 ) : (
-                                    dummyIsoFiles.map((iso) => (
+                                    isoFiles.map((iso) => (
                                         <MenuItem key={iso.path} value={iso.path}>
-                                            {iso.name}
+                                            {iso.name} ({Math.round(iso.size / 1024 / 1024)}MB)
                                         </MenuItem>
                                     ))
                                 )}

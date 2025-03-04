@@ -1,6 +1,7 @@
 import { NetworkOption } from '@interfaces/qemu.types';
 import { handleApiError } from '@services/auth/handleApiError';
 import { ApiError } from '@interfaces/api.types';
+import { IsoFile } from '@interfaces/qemu.types';
 
 /**
  * Holt die Liste aller verfügbaren Netzwerke vom Backend
@@ -9,11 +10,11 @@ import { ApiError } from '@interfaces/api.types';
  */
 export const getNetworks = async (): Promise<NetworkOption[]> => {
     const token = localStorage.getItem('jwt_token');
-    
+
     if (!token) {
         throw new Error('Kein Auth-Token gefunden');
     }
-    
+
     try {
         const response = await fetch('/api/qemu/networks', {
             headers: {
@@ -51,11 +52,11 @@ export const DEFAULT_OS_VARIANT = 'linux2022';
  */
 export const getOsVariants = async (): Promise<string[]> => {
     const token = localStorage.getItem('jwt_token');
-    
+
     if (!token) {
         throw new Error('Kein Auth-Token gefunden');
     }
-    
+
     try {
         const response = await fetch('/api/qemu/osinfo', {
             headers: {
@@ -80,6 +81,44 @@ export const getOsVariants = async (): Promise<string[]> => {
             ...variants.filter(v => v !== DEFAULT_OS_VARIANT)
         ];
 
+    } catch (error) {
+        if (error instanceof Error) {
+            throw error;
+        }
+        return handleApiError(error as ApiError);
+    }
+};
+
+
+/**
+ * Holt die Liste verfügbarer ISO-Images
+ * @throws Error wenn die Anfrage fehlschlägt oder der Token fehlt
+ * @returns Array von ISO-Dateien mit Name, Pfad und Größe
+ */
+export const getIsoImages = async (): Promise<IsoFile[]> => {
+    const token = localStorage.getItem('jwt_token');
+
+    if (!token) {
+        throw new Error('Kein Auth-Token gefunden');
+    }
+
+    try {
+        const response = await fetch('/api/qemu/images', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                statusText: response.statusText
+            };
+        }
+
+        const data = await response.json();
+        return data.data;
     } catch (error) {
         if (error instanceof Error) {
             throw error;
