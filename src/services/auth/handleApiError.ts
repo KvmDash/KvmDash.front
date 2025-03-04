@@ -4,8 +4,11 @@
 // Diese Funktion wird in den Dateien 
 // frontend/src/services/host.ts, 
 // frontend/src/services/virtualization.ts 
+import { ApiError } from '@interfaces/api.types';
 
-export const handleApiError = (error: any) => {
+
+
+export const handleApiError = (error: ApiError) => {
     const token = localStorage.getItem('jwt_token');
     
     console.log('Error Objekt:', error); // Debug-Log

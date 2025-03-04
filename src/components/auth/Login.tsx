@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { login } from '../../services/auth'
+import { login } from '../../services/auth/auth'
 import { LoginResponse } from '../../types/auth'
 import { TokenStorage } from '../../services/tokenStorage'
 
