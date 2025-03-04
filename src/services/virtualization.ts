@@ -22,7 +22,10 @@ export const getVirtualMachines = async (): Promise<VMResponse[]> => {
         });
 
         if (!response.ok) {
-            throw { status: response.status, message: 'VM-Daten konnten nicht geladen werden' };
+            throw {
+                status: response.status,
+                statusText: response.statusText
+            };
         }
 
         const data = await response.json();

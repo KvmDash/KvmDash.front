@@ -6,14 +6,14 @@
 // frontend/src/services/virtualization.ts 
 
 export const handleApiError = (error: any) => {
-    // Token aus localStorage holen
     const token = localStorage.getItem('jwt_token');
     
-    // Wenn ein 401 Fehler auftritt und wir ein Token haben
+    console.log('Error Objekt:', error); // Debug-Log
+    console.log('Error Status:', error?.status); // Debug-Log
+    
     if (error?.status === 401 && token) {
-        // Token entfernen
+        console.log('Token wird gelöscht und Weiterleitung...'); // Debug-Log
         localStorage.removeItem('jwt_token');
-        // Zur Login-Seite weiterleiten
         window.location.href = '/login';
     }
     

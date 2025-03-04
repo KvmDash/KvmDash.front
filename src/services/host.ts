@@ -24,11 +24,10 @@ export const getSystemInfo = async (): Promise<SystemInfo> => {
         });
 
         if (!response.ok) {
-            console.error('API Fehler:', {
+            throw {
                 status: response.status,
                 statusText: response.statusText
-            });
-            throw new Error(`Server antwortet mit Status ${response.status}`);
+            };
         }
 
         return response.json();
@@ -60,11 +59,10 @@ export const getCpuInfo = async (): Promise<CpuData[]> => {
         });
 
         if (!response.ok) {
-            console.error('API Fehler:', {
+            throw {
                 status: response.status,
                 statusText: response.statusText
-            });
-            throw new Error(`Server antwortet mit Status ${response.status}`);
+            };
         }
 
         return response.json();
@@ -98,11 +96,10 @@ export const getMemInfo = async (): Promise<MemData> => {
         });
 
         if (!response.ok) {
-            console.error('API Fehler:', {
+            throw {
                 status: response.status,
                 statusText: response.statusText
-            });
-            throw new Error(`Server antwortet mit Status ${response.status}`);
+            };
         }
 
         return response.json();
@@ -135,11 +132,10 @@ export const getDiskInfo = async (): Promise<DiskData[]> => {
         });
 
         if (!response.ok) {
-            console.error('API Fehler:', {
+            throw {
                 status: response.status,
                 statusText: response.statusText
-            });
-            throw new Error(`Server antwortet mit Status ${response.status}`);
+            };
         }
 
         return response.json();
