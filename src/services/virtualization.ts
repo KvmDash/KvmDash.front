@@ -1,5 +1,7 @@
 import { VMResponse } from '@interfaces/vm.types';
 import { handleApiError } from '@services/auth/handleApiError';
+import { ApiError } from '@interfaces/api.types';
+import { VmStatusResponse } from '@interfaces/vm.types';
 
 /**
  * Holt die Liste aller virtuellen Maschinen vom Backend
@@ -31,8 +33,13 @@ export const getVirtualMachines = async (): Promise<VMResponse[]> => {
         const data = await response.json();
         return data.domains;
     } catch (error) {
-        return handleApiError(error);
+        if (error instanceof Error) {
+            throw error;
+        }
+        // Type Assertion für den API Error
+        return handleApiError(error as ApiError);
     }
+    
 };
 
 /**
@@ -40,7 +47,7 @@ export const getVirtualMachines = async (): Promise<VMResponse[]> => {
  * @throws Error wenn die Anfrage fehlschlägt oder der Token fehlt
  * @returns 
  */
-export const getVirtualMachineStatus = async () => {
+export const getVirtualMachineStatus = async (): Promise<VmStatusResponse> => {
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
@@ -64,6 +71,10 @@ export const getVirtualMachineStatus = async () => {
 
         return await response.json();
     } catch (error) {
-        return handleApiError(error);
+        if (error instanceof Error) {
+            throw error;
+        }
+        // Type Assertion für den API Error
+        return handleApiError(error as ApiError);
     }
-};
+}

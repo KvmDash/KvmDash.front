@@ -14,11 +14,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { CreateForm } from '@components/vm/CreateForm';
 import type { VmFormData } from '@interfaces/vm.types';
-
+import { VmStatus, VmStatusResponse } from '@interfaces/vm.types';
 import { getVirtualMachineStatus } from '@services/virtualization';
 
 export default function VmContent(): JSX.Element {
-    const [vms, setVms] = useState({});
+    const [vms, setVms] = useState<VmStatusResponse>({});
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<string>('');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
@@ -31,8 +31,21 @@ export default function VmContent(): JSX.Element {
             try {
                 const status = await getVirtualMachineStatus();
                 setVms(status);
-            } catch (err: any) {
-                setError(err.message);
+            } catch (err: unknown) {
+                let errorMessage = 'Ein unbekannter Fehler ist aufgetreten';
+                
+                if (err instanceof Error) {
+                    errorMessage = err.message;
+                } else if (
+                    typeof err === 'object' && 
+                    err !== null && 
+                    'message' in err && 
+                    typeof err.message === 'string'
+                ) {
+                    errorMessage = err.message;
+                }
+                
+                setError(errorMessage);
             }
         };
 
@@ -90,7 +103,7 @@ export default function VmContent(): JSX.Element {
                     <Grid size={{ xs: 12 }} >
                         <CreateForm onSubmit={handleCreateVm} />
                     </Grid>
-                    {Object.entries(vms).map(([vmName, vmData]) => (
+                    {Object.entries(vms).map(([vmName, vmData]: [string, VmStatus]) =>  (
                         <Grid size={{ xs: 12, sm: 6, md: 4 }} key={vmName}>
                             <Card elevation={3}>
                                 <CardHeader

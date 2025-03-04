@@ -120,3 +120,21 @@ export interface VmDetails {
     network: VmNetworkInterface[]; // Netzwerk-Interfaces
     stats: VmStats;           // Aktuelle Statistiken
 }
+
+
+/**
+ * Status einer VM vom status endpoint
+ */
+export interface VmStatus {
+    'state.state': string;      // Status der VM (1 = running, 5 = shutdown)
+    'balloon.current': string;  // Aktueller RAM in KB
+    'vcpu.current': string;    // Anzahl aktiver vCPUs
+    'ip': string;              // IP-Adresse der VM
+}
+
+/**
+ * Response vom /virt/domains/status endpoint
+ */
+export interface VmStatusResponse {
+    [key: string]: VmStatus;  // Key ist der VM-Name
+}
