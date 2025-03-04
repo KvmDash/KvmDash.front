@@ -34,3 +34,36 @@ export const getVirtualMachines = async (): Promise<VMResponse[]> => {
         return handleApiError(error);
     }
 };
+
+/**
+ * Holt den Status aller virtuellen Maschinen vom Backend
+ * @throws Error wenn die Anfrage fehlschlägt oder der Token fehlt
+ * @returns 
+ */
+export const getVirtualMachineStatus = async () => {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        throw new Error('Kein Auth-Token gefunden');
+    }
+    
+    try {
+        const response = await fetch('/api/virt/domains/status', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                statusText: response.statusText
+            };
+        }
+
+        return await response.json();
+    } catch (error) {
+        return handleApiError(error);
+    }
+};

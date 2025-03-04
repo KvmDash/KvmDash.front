@@ -1,4 +1,4 @@
-import { useState, JSX } from 'react';
+import { useState, useEffect, JSX } from 'react';
 import {
     Box, Card, CardContent, CardHeader, Typography,
     Chip, IconButton, CardActions, CircularProgress,
@@ -15,31 +15,31 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { CreateForm } from '@components/vm/CreateForm';
 import type { VmFormData } from '@interfaces/vm.types';
 
-// Dummy-Daten für VMs
-// Dummy-Daten für VMs erweitern
-const dummyVms = {
-    'test-vm-1': {
-        'state.state': '1',
-        'balloon.current': '4194304',
-        'vcpu.current': '2',
-        'ip': '192.168.1.100'
-    },
-    'test-vm-2': {
-        'state.state': '5',
-        'balloon.current': '8388608',
-        'vcpu.current': '4',
-        'ip': '192.168.1.101'
-    }
-};
+import { getVirtualMachineStatus } from '@services/virtualization';
 
 export default function VmContent(): JSX.Element {
-    const [vms] = useState(dummyVms);
+    const [vms, setVms] = useState({});
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<string>('');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
     const [vmToDelete, setVmToDelete] = useState<string>('');
     const [confirmationName, setConfirmationName] = useState<string>('');
     const [deleteVhd, setDeleteVhd] = useState<boolean>(false);
+
+    useEffect(() => {
+        const fetchStatus = async () => {
+            try {
+                const status = await getVirtualMachineStatus();
+                setVms(status);
+            } catch (err: any) {
+                setError(err.message);
+            }
+        };
+
+        fetchStatus();
+        const interval = setInterval(fetchStatus, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     const handleDeleteClick = (vmName: string): void => {
         setVmToDelete(vmName);
