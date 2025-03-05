@@ -58,6 +58,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
         };
 
         fetchVMs();
+        // Aktualisierung alle 10 Sekunden
+        const interval = setInterval(fetchVMs, 10000);
+        return () => clearInterval(interval);
     }, []);
 
     const handleLogout = () => {
@@ -70,7 +73,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
             toggleDrawer();
         }
         setOpenVm(!openVm);
-        navigate('/vm'); 
+        navigate('/vm');
     };
 
     /**
