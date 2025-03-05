@@ -31,7 +31,7 @@ export const HostInfo = () => {
     }, []);
 
     return (
-        <Box sx={{ flexGrow: 1, p: 4 }}>
+        <Box sx={{ flexGrow: 1, p: 2 }}>
             <Card elevation={3} sx={{ borderRadius: 3 }}>
                 <CardHeader title="Systeminformationen" />
                 <CardContent>

@@ -6,7 +6,7 @@ import DiskInfo from '@/components/host/DiskInfo'
 
 export default function Home() {
     return (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{  }}>
             <HostInfo />
             <CpuInfo />
             <MemInfo />

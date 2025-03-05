@@ -89,9 +89,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
             case 3:
                 return 'warning.main';  // Orange = VM pausiert
             case 5:
-                return 'error.main';    // Rot = VM heruntergefahren
+                return 'grey';    // Rot = VM heruntergefahren
             default:
-                return 'text.disabled'; // Grau = Status unbekannt
+                return 'text.grey'; // Grau = Status unbekannt
         }
     };
 
@@ -176,7 +176,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                     </Collapse>
                 )}
 
-              
+
 
                 <ListItem key="iso-images" disablePadding>
                     <ListItemButton component={Link} to="/iso-images" sx={{ justifyContent: open ? 'initial' : 'center' }}>

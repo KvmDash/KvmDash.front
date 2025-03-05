@@ -44,7 +44,18 @@ const themeColors = {
         main: '#72503c',    // surface-tonal-a20
         light: '#9a7e6f',   // surface-tonal-a40
         dark: '#4a250e',    // surface-tonal-a0
+    },
+    success: {
+        main: '#4caf50',    // Standard Grün
+        light: '#81c784',   // Heller
+        dark: '#388e3c'     // Dunkler
+    },
+    error: {
+        main: '#f44336',    // Standard Rot
+        light: '#e57373',   // Heller
+        dark: '#d32f2f'     // Dunkler
     }
+
 };
 
 export const theme = createTheme({
@@ -69,6 +80,16 @@ export const theme = createTheme({
                     margin: 0,
                     padding: 0,
                     minHeight: '100vh'
+                }
+            }
+        },
+        MuiToolbar: {
+            styleOverrides: {
+                root: {
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '24px 16px',
                 }
             }
         },
@@ -132,28 +153,31 @@ export const sidebarStyles = {
             width: (open: boolean) => open ? DRAWER_WIDTH : DRAWER_MINI_WIDTH
         }
     },
-    logo: {
-        transition: {
-            open: {
-                width: '100%',
-                maxWidth: '100px',
-            },
-            closed: {
-                width: '50%',
-                maxWidth: '32px',
-            },
-            common: {
-                minWidth: '32px',
-                height: 'auto',
-                transition: 'width 0.3s, max-width 0.3s'
-            }
-        }
-    },
+
     drawerControlIcon: {
         container: {
             display: 'flex',
             justifyContent: 'flex-end',
             padding: '8px'
+        }
+    }
+};
+
+// Separate Logo-Styles
+export const logoStyles = {
+    logoTransition: {
+        open: {
+            width: '100%',
+            maxWidth: '100px',
+        },
+        closed: {
+            width: '50%',
+            maxWidth: '32px',
+        },
+        common: {
+            minWidth: '32px',
+            height: 'auto',
+            transition: 'width 0.3s, max-width 0.3s'
         }
     }
 };
