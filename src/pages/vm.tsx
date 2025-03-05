@@ -160,8 +160,8 @@ export default function VmContent(): JSX.Element {
                                         <Link
                                             to={`/vm/${vmName}`}
                                             style={{
-                                                textDecoration: 'underline',
-                                                color: 'inherit'
+                                                textDecoration: 'none',
+                                                color: 'inherit',
                                             }}
                                         >
                                             {vmName}
