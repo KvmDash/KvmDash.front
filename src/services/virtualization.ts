@@ -1,7 +1,7 @@
 import { VMResponse } from '@interfaces/vm.types';
 import { handleApiError } from '@services/auth/handleApiError';
 import { ApiError } from '@interfaces/api.types';
-import { VmStatusResponse, VmFormData, VmActionResponse } from '@interfaces/vm.types';
+import { VmStatusResponse, VmFormData, VmActionResponse, VmStats } from '@interfaces/vm.types';
 
 /**
  * Holt die Liste aller virtuellen Maschinen vom Backend
@@ -246,6 +246,41 @@ export const deleteVirtualMachine = async (name: string, deleteVhd = false): Pro
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ deleteVhd })
+        });
+
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                statusText: response.statusText
+            };
+        }
+
+        return await response.json();
+    } catch (error) {
+        if (error instanceof Error) {
+            throw error;
+        }
+        return handleApiError(error as ApiError);
+    }
+};
+
+/**
+ * Holt detaillierte Informationen zu einer virtuellen Maschine
+ * @param vmName Name der VM
+ */
+export const getVmDetails = async (vmName: string): Promise<VmStats> => {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        throw new Error('Kein Auth-Token gefunden');
+    }
+    
+    try {
+        const response = await fetch(`/api/virt/domain/${vmName}/details`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
         });
 
         if (!response.ok) {

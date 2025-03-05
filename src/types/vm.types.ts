@@ -55,32 +55,34 @@ export interface VmNetworkInterface {
  * Detaillierte VM-Statistiken
  */
 export interface VmStats {
-    cpu: {
-        total_time: number;    // Gesamte CPU-Zeit
-        user_time: number;     // CPU-Zeit im User-Mode
-        system_time: number;   // CPU-Zeit im System-Mode
-    };
-    memory: {
-        current: number;       // Aktuell genutzter RAM
-        available: number;     // Verfügbarer RAM
-        unused: number;        // Ungenutzter RAM
-        rss: number;          // Resident Set Size
-    };
-    disk: {
-        [key: string]: {      // Pro Festplatte
-            reads: number;     // Lesevorgänge
-            writes: number;    // Schreibvorgänge
-            capacity: number;  // Gesamtkapazität
-            allocation: number; // Belegte Kapazität
-        };
-    };
-    network: {
-        [key: string]: {      // Pro Netzwerk-Interface
-            rx_bytes: number;  // Empfangene Bytes
-            tx_bytes: number;  // Gesendete Bytes
-            rx_packets: number; // Empfangene Pakete
-            tx_packets: number; // Gesendete Pakete
-        };
+    name: string;
+    state: number;
+    maxMemory: number;
+    memory: number;
+    cpuCount: number;
+    cpuTime: number;
+    disks: {
+        device: string;
+        driver: string;
+        path: string;
+        bus: string;
+    }[];
+    networks: {
+        type: string;
+        mac: string;
+        model: string;
+        bridge: string;
+    }[];
+    graphics: {
+        type: string;
+        port: string;
+        listen: string;
+        passwd?: string;
+    }[];
+    stats: {
+        cpu_time: number;
+        memory_usage: number;
+        max_memory: number;
     };
 }
 
