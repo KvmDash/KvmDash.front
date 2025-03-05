@@ -15,6 +15,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ComputerIcon from '@mui/icons-material/Computer';
 import StorageIcon from '@mui/icons-material/Storage';
 import LogoutIcon from '@mui/icons-material/Logout';
+import AlbumIcon from '@mui/icons-material/Album';
+
 
 // Components
 import { sidebarStyles } from '@theme/components/SidebarStyles'
@@ -174,6 +176,17 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                     </Collapse>
                 )}
 
+              
+
+                <ListItem key="iso-images" disablePadding>
+                    <ListItemButton component={Link} to="/iso-images" sx={{ justifyContent: open ? 'initial' : 'center' }}>
+                        <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
+                            <AlbumIcon />
+                        </ListItemIcon>
+                        {open && <ListItemText primary="CD-Boot Images" />}
+                    </ListItemButton>
+                </ListItem>
+
                 <ListItem key="settings" disablePadding>
                     <ListItemButton component={Link} to="/settings" sx={{ justifyContent: open ? 'initial' : 'center' }}>
                         <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
@@ -182,6 +195,8 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         {open && <ListItemText primary="Settings" />}
                     </ListItemButton>
                 </ListItem>
+
+
             </List>
 
             <List sx={{ marginTop: 'auto' }}>

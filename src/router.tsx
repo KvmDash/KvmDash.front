@@ -5,6 +5,7 @@ import Home from './pages/home';
 import Vm from './pages/vm';
 import VmDetailsPage from './pages/vmDetails';
 import Settings from './pages/settings';
+import IsoImages from './pages/iso-image';
 
 export const router = createBrowserRouter([
     {
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
             {
                 path: '/vm/:vmName',
                 element: <VmDetailsPage />
+            },
+            {
+                path: '/iso-images',
+                element: <IsoImages />
             },
             {
                 path: '/settings',
