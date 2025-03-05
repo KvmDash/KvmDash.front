@@ -23,14 +23,18 @@ export const AppLayout = () => {
     return (
         <Box sx={{ display: 'flex' }}>
             <SideBar open={open} toggleDrawer={toggleDrawer} />
-            <main style={{
-                flexGrow: 1,
-                padding: '20px',
-                marginLeft: 64,
-                transition: 'margin 0.3s'
-            }}>
+            <Box 
+                component="main"  // Dies macht das Box-Element zu einem main-Element
+                sx={{
+                    flexGrow: 1,
+                    bgcolor: 'background.default',  // Verwendet Theme Background
+                    p: 3,  // padding: theme.spacing(3)
+                    marginLeft: 8,  // 64px in MUI's 8px Einheiten
+                    transition: 'margin 0.3s'
+                }}
+            >
                 <Outlet />
-            </main>
+            </Box>
         </Box>
     )
 }

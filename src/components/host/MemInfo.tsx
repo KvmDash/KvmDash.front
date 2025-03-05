@@ -43,29 +43,18 @@ export const MemInfo = () => {
     };
 
 
-    if (loading) {
-        return (
-            <Box display="flex" justifyContent="center" p={2}>
-                <LinearProgress />
-            </Box>
-        );
-    }
-
-    if (error) {
-        return <Alert severity="error">{error}</Alert>;
-    }
-
-    if (!memData) {
-        return null;
-    }
-
-
-
     return (
         <Box sx={{ flexGrow: 1, p: 4 }}>
             <Card elevation={3} sx={{ borderRadius: 3 }}>
                 <CardHeader title="Speicherinformationen" />
                 <CardContent>
+                {loading ? (
+                        <Box display="flex" justifyContent="center" p={2}>
+                            <LinearProgress />
+                        </Box>
+                    ) : error ? (
+                        <Alert severity="error">{error}</Alert>
+                    ) : (
                     <Grid container spacing={2}>
                         <Grid size={{ xs: 12 }}>
                             <Typography variant="body2" color="textSecondary">
@@ -90,6 +79,7 @@ export const MemInfo = () => {
                                     {getUsedPercentage().toFixed(1)}%
                                 </Typography>
                             </Box>
+
                             <Grid container spacing={1}>
                                 {[
                                     { label: 'Gesamt', value: memData?.total },
@@ -104,6 +94,7 @@ export const MemInfo = () => {
                             </Grid>
                         </Grid>
                     </Grid>
+                    )}
                 </CardContent>
             </Card>
         </Box>
