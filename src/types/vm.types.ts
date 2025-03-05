@@ -114,3 +114,14 @@ export interface VmStatus {
 export interface VmStatusResponse {
     [key: string]: VmStatus;  // Key ist der VM-Name
 }
+
+
+/**
+ * Response vom /virt/domains/action endpoint
+ */
+export interface VmActionResponse {
+    success: boolean;
+    domain: string;
+    action: string;
+    error: string | null;
+}

@@ -15,7 +15,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { CreateForm } from '@components/vm/CreateForm';
 import type { VmFormData } from '@interfaces/vm.types';
 import { VmStatus, VmStatusResponse } from '@interfaces/vm.types';
-import { getVirtualMachineStatus } from '@services/virtualization';
+import {
+    getVirtualMachineStatus, startVirtualMachine, stopVirtualMachine,
+    rebootVirtualMachine, deleteVirtualMachine
+} from '@services/virtualization';
 
 export default function VmContent(): JSX.Element {
     const [vms, setVms] = useState<VmStatusResponse>({});
@@ -33,18 +36,18 @@ export default function VmContent(): JSX.Element {
                 setVms(status);
             } catch (err: unknown) {
                 let errorMessage = 'Ein unbekannter Fehler ist aufgetreten';
-                
+
                 if (err instanceof Error) {
                     errorMessage = err.message;
                 } else if (
-                    typeof err === 'object' && 
-                    err !== null && 
-                    'message' in err && 
+                    typeof err === 'object' &&
+                    err !== null &&
+                    'message' in err &&
                     typeof err.message === 'string'
                 ) {
                     errorMessage = err.message;
                 }
-                
+
                 setError(errorMessage);
             }
         };
@@ -54,24 +57,69 @@ export default function VmContent(): JSX.Element {
         return () => clearInterval(interval);
     }, []);
 
+    const handleVmAction = async (action: 'start' | 'stop' | 'reboot', vmName: string): Promise<void> => {
+        setLoading(vmName);
+        try {
+            let response;
+            switch (action) {
+                case 'start':
+                    response = await startVirtualMachine(vmName);
+                    break;
+                case 'stop':
+                    response = await stopVirtualMachine(vmName);
+                    break;
+                case 'reboot':
+                    response = await rebootVirtualMachine(vmName);
+                    break;
+            }
+
+            // Status neu laden nach erfolgreicher Aktion
+            const status = await getVirtualMachineStatus();
+            setVms(status);
+        } catch (err) {
+            let errorMessage = 'Fehler bei der VM-Aktion';
+            if (err instanceof Error) {
+                errorMessage = err.message;
+            }
+            setError(errorMessage);
+        } finally {
+            setLoading('');
+        }
+    };
+
+    // Nach handleVmAction hinzufügen:
     const handleDeleteClick = (vmName: string): void => {
         setVmToDelete(vmName);
         setDeleteDialogOpen(true);
         setConfirmationName('');
+        setDeleteVhd(false);
     };
 
     const handleDeleteConfirm = async (): Promise<void> => {
         if (confirmationName === vmToDelete) {
-            setDeleteDialogOpen(false);
-            setVmToDelete('');
-            setConfirmationName('');
-            setDeleteVhd(false);
-        }
-    };
+            setLoading(vmToDelete);
+            try {
+                await deleteVirtualMachine(vmToDelete, deleteVhd);
 
-    const handleVmAction = async (action: 'start' | 'stop' | 'reboot' | 'delete', vmName: string): Promise<void> => {
-        setLoading(vmName);
-        setTimeout(() => setLoading(''), 1000); // Simulate API call
+                // Status neu laden nach erfolgreicher Löschung
+                const status = await getVirtualMachineStatus();
+                setVms(status);
+
+                // Dialog schließen und Status zurücksetzen
+                setDeleteDialogOpen(false);
+                setVmToDelete('');
+                setConfirmationName('');
+                setDeleteVhd(false);
+            } catch (err) {
+                let errorMessage = 'Fehler beim Löschen der VM';
+                if (err instanceof Error) {
+                    errorMessage = err.message;
+                }
+                setError(errorMessage);
+            } finally {
+                setLoading('');
+            }
+        }
     };
 
     const handleCreateVm = async (formData: VmFormData): Promise<void> => {
@@ -103,7 +151,7 @@ export default function VmContent(): JSX.Element {
                     <Grid size={{ xs: 12 }} >
                         <CreateForm onSubmit={handleCreateVm} />
                     </Grid>
-                    {Object.entries(vms).map(([vmName, vmData]: [string, VmStatus]) =>  (
+                    {Object.entries(vms).map(([vmName, vmData]: [string, VmStatus]) => (
                         <Grid size={{ xs: 12, sm: 6, md: 4 }} key={vmName}>
                             <Card elevation={3}>
                                 <CardHeader
@@ -159,6 +207,7 @@ export default function VmContent(): JSX.Element {
                                         <IconButton
                                             size="small"
                                             onClick={() => handleDeleteClick(vmName)}
+                                            disabled={loading === vmName}
                                         >
                                             <DeleteIcon sx={{ color: 'error.main' }} />
                                         </IconButton>

@@ -1,7 +1,7 @@
 import { VMResponse } from '@interfaces/vm.types';
 import { handleApiError } from '@services/auth/handleApiError';
 import { ApiError } from '@interfaces/api.types';
-import { VmStatusResponse, VmFormData } from '@interfaces/vm.types';
+import { VmStatusResponse, VmFormData, VmActionResponse } from '@interfaces/vm.types';
 
 /**
  * Holt die Liste aller virtuellen Maschinen vom Backend
@@ -106,6 +106,156 @@ export const createVirtualMachine = async (vmData: VmFormData): Promise<boolean>
 
         const data = await response.json();
         return data.success;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw error;
+        }
+        return handleApiError(error as ApiError);
+    }
+};
+
+
+/**
+ * Startet eine virtuelle Maschine
+ * @param name Name der VM
+ * @throws Error wenn die Anfrage fehlschlägt
+ */
+export const startVirtualMachine = async (name: string): Promise<VmActionResponse> => {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        throw new Error('Kein Auth-Token gefunden');
+    }
+    
+    try {
+        const response = await fetch(`/api/virt/domain/${name}/start`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                statusText: response.statusText
+            };
+        }
+
+        return await response.json();
+    } catch (error) {
+        if (error instanceof Error) {
+            throw error;
+        }
+        return handleApiError(error as ApiError);
+    }
+};
+
+/**
+ * Stoppt eine virtuelle Maschine
+ * @param name Name der VM
+ * @param force Wenn true, wird die VM hart gestoppt
+ */
+export const stopVirtualMachine = async (name: string, force = false): Promise<VmActionResponse> => {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        throw new Error('Kein Auth-Token gefunden');
+    }
+    
+    try {
+        const response = await fetch(`/api/virt/domain/${name}/stop`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ force })
+        });
+
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                statusText: response.statusText
+            };
+        }
+
+        return await response.json();
+    } catch (error) {
+        if (error instanceof Error) {
+            throw error;
+        }
+        return handleApiError(error as ApiError);
+    }
+};
+
+/**
+ * Startet eine virtuelle Maschine neu
+ * @param name Name der VM
+ */
+export const rebootVirtualMachine = async (name: string): Promise<VmActionResponse> => {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        throw new Error('Kein Auth-Token gefunden');
+    }
+    
+    try {
+        const response = await fetch(`/api/virt/domain/${name}/reboot`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                statusText: response.statusText
+            };
+        }
+
+        return await response.json();
+    } catch (error) {
+        if (error instanceof Error) {
+            throw error;
+        }
+        return handleApiError(error as ApiError);
+    }
+};
+
+/**
+ * Löscht eine virtuelle Maschine
+ * @param name Name der VM
+ * @param deleteVhd Wenn true, werden auch die VHD-Dateien gelöscht
+ */
+export const deleteVirtualMachine = async (name: string, deleteVhd = false): Promise<VmActionResponse> => {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        throw new Error('Kein Auth-Token gefunden');
+    }
+    
+    try {
+        const response = await fetch(`/api/virt/domain/${name}/delete`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ deleteVhd })
+        });
+
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                statusText: response.statusText
+            };
+        }
+
+        return await response.json();
     } catch (error) {
         if (error instanceof Error) {
             throw error;
