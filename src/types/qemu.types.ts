@@ -50,3 +50,8 @@ export interface IsoStatusResponse {
     status: string;
     data: IsoDownloadStatus[];
 }
+
+export interface DeleteIsoResponse {
+    status: string;
+    message: string;
+}

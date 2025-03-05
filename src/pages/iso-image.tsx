@@ -24,7 +24,7 @@ import {
     DialogTitle,
 } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import { uploadIso, getIsoStatus, getIsoImages } from '@services/qemu';
+import { uploadIso, getIsoStatus, getIsoImages, deleteIso } from '@services/qemu';
 import { IsoFile } from '@interfaces/qemu.types';
 
 const IsoImages: FC = (): ReactElement => {
@@ -70,22 +70,25 @@ const IsoImages: FC = (): ReactElement => {
     }, [downloadProgress]);
 
 
-    // Laden der ISO-Images
+    // Polling für ISO-Liste alle 15 Sekunden
     useEffect(() => {
         const loadIsoImages = async () => {
-            setIsLoading(true);
             try {
                 const images = await getIsoImages();
                 setIsoFiles(images);
             } catch (error) {
                 console.error('Failed to load ISO images:', error);
-                setError('Fehler beim Laden der Boot Images');
-            } finally {
-                setIsLoading(false);
             }
         };
 
+        // Initial laden
         loadIsoImages();
+
+        // Polling alle 15 Sekunden
+        const intervalId = setInterval(loadIsoImages, 15000);
+
+        // Cleanup beim Unmount
+        return () => clearInterval(intervalId);
     }, []);
 
     // Hilfsfunktion für Dateigrößen
@@ -97,7 +100,7 @@ const IsoImages: FC = (): ReactElement => {
         return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
     };
 
-    
+
     // Dialog-Handler hinzufügen
     const handleDeleteClick = (iso: IsoFile) => {
         setDeleteDialog({ open: true, iso });
@@ -107,12 +110,26 @@ const IsoImages: FC = (): ReactElement => {
         setDeleteDialog({ open: false, iso: null });
     };
 
-    const handleDeleteConfirm = () => {
-        if (deleteDialog.iso) {
-            console.log('Lösche ISO:', deleteDialog.iso.name);
-            // TODO: Implementiere deleteIso Funktion
+    const handleDeleteConfirm = async () => {
+        if (!deleteDialog.iso) return;
+
+        try {
+            setIsLoading(true);
+            await deleteIso(deleteDialog.iso.path);
+
+            // Aktualisiere die Liste nach erfolgreichem Löschen
+            const images = await getIsoImages();
+            setIsoFiles(images);
+
+            // Zeige Erfolgs-Nachricht
+            setUploadStatus('ISO-Image erfolgreich gelöscht');
+        } catch (error) {
+            console.error('Delete failed:', error);
+            setError('Fehler beim Löschen des ISO-Images');
+        } finally {
+            setIsLoading(false);
+            setDeleteDialog({ open: false, iso: null });
         }
-        setDeleteDialog({ open: false, iso: null });
     };
 
 
@@ -209,10 +226,10 @@ const IsoImages: FC = (): ReactElement => {
                                                     size="small"
                                                     onClick={() => {
                                                         console.log('Delete clicked for:', iso.name);
-                                                        handleDeleteClick(iso); 
+                                                        handleDeleteClick(iso);
                                                     }}
                                                     sx={{
-                                                        color: 'error.main',  
+                                                        color: 'error.main',
                                                         '&:hover': {
                                                             color: 'error.dark'
                                                         }
@@ -248,7 +265,7 @@ const IsoImages: FC = (): ReactElement => {
                     <Button onClick={handleDeleteCancel}>
                         Abbrechen
                     </Button>
-                    <Button 
+                    <Button
                         onClick={handleDeleteConfirm}
                         color="error"
                         variant="contained"

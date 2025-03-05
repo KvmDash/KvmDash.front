@@ -2,7 +2,7 @@ import { NetworkOption } from '@interfaces/qemu.types';
 import { handleApiError } from '@services/auth/handleApiError';
 import { ApiError } from '@interfaces/api.types';
 import { IsoFile } from '@interfaces/qemu.types';
-import { IsoResponse, IsoStatusResponse } from '@interfaces/qemu.types';
+import { IsoResponse, IsoStatusResponse, DeleteIsoResponse } from '@interfaces/qemu.types';
 
 /**
  * Holt die Liste aller verfügbaren Netzwerke vom Backend
@@ -198,4 +198,31 @@ export const getIsoStatus = async (): Promise<IsoStatusResponse> => {
         }
         return handleApiError(error as ApiError);
     }
+};
+
+
+/**
+ * Löscht ein ISO-Image aus dem Storage Pool
+ * @param path Pfad zur ISO-Datei
+ * @throws Error wenn die Anfrage fehlschlägt oder der Token fehlt
+ * @returns DeleteIsoResponse mit Status und Nachricht
+ */
+export const deleteIso = async (path: string): Promise<DeleteIsoResponse> => {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) throw new Error('Nicht authentifiziert');
+
+    const response = await fetch('/api/qemu/iso/delete', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ path })
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
 };
