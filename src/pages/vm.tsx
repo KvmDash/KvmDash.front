@@ -60,16 +60,15 @@ export default function VmContent(): JSX.Element {
     const handleVmAction = async (action: 'start' | 'stop' | 'reboot', vmName: string): Promise<void> => {
         setLoading(vmName);
         try {
-            let response;
             switch (action) {
                 case 'start':
-                    response = await startVirtualMachine(vmName);
+                    await startVirtualMachine(vmName);
                     break;
                 case 'stop':
-                    response = await stopVirtualMachine(vmName);
+                    await stopVirtualMachine(vmName);
                     break;
                 case 'reboot':
-                    response = await rebootVirtualMachine(vmName);
+                    await rebootVirtualMachine(vmName);
                     break;
             }
 
