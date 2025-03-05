@@ -1,4 +1,24 @@
-import { createTheme } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
+
+// Konstanten
+const DRAWER_WIDTH = 240;
+const DRAWER_MINI_WIDTH = 64;
+
+// Theme-Erweiterung für TypeScript
+declare module '@mui/material/styles' {
+    interface Theme {
+        drawer: {
+            width: number;
+            miniWidth: number;
+        };
+    }
+    interface ThemeOptions {
+        drawer?: {
+            width: number;
+            miniWidth: number;
+        };
+    }
+}
 
 // Theme Konstanten
 const themeColors = {
@@ -28,7 +48,19 @@ const themeColors = {
 };
 
 export const theme = createTheme({
-    palette: themeColors,
+    // Basis Theme-Konfiguration
+    palette: {
+        mode: 'dark',
+        ...themeColors
+    },
+
+    // Custom Drawer Konfiguration
+    drawer: {
+        width: DRAWER_WIDTH,
+        miniWidth: DRAWER_MINI_WIDTH
+    },
+
+    // Komponenten-Styles
     components: {
         MuiCssBaseline: {
             styleOverrides: {
@@ -37,13 +69,91 @@ export const theme = createTheme({
                     margin: 0,
                     padding: 0,
                     minHeight: '100vh'
-                },
-                html: {
-                    margin: 0,
-                    padding: 0,
-                    height: '100%'
+                }
+            }
+        },
+        MuiDrawer: {
+            styleOverrides: {
+                root: {
+                    width: DRAWER_WIDTH,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: DRAWER_WIDTH,
+                        boxSizing: 'border-box',
+                        overflowX: 'hidden',
+                        transition: 'width 0.3s',
+                        boxShadow: '0px 0px 20px 0px rgba(0,0,0,0.5)',
+                    }
+                }
+            }
+        },
+        MuiCard: {
+            styleOverrides: {
+                root: {
+                    borderRadius: 8,
+                    backgroundColor: themeColors.background.default,
+                    color: themeColors.text.primary
+                }
+            }
+        },
+        MuiCardHeader: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: themeColors.primary.dark,
+                    color: themeColors.text.primary
+                }
+            }
+        },
+        MuiListItem: {
+            styleOverrides: {
+                root: {
+                    color: themeColors.text.primary,
+                    transition: 'all 0.2s ease-in-out',
+                    '&:hover': {
+                        backgroundColor: themeColors.surfaceTonal.dark,
+                        '& .MuiListItemIcon-root': {
+                            color: themeColors.primary.light
+                        },
+                        '& .MuiListItemText-primary': {
+                            color: themeColors.primary.light
+                        }
+                    }
                 }
             }
         }
     }
 });
+
+// Separate Style-Definitionen für die Sidebar
+export const sidebarStyles = {
+    drawer: {
+        width: (open: boolean) => open ? DRAWER_WIDTH : DRAWER_MINI_WIDTH,
+        paper: {
+            width: (open: boolean) => open ? DRAWER_WIDTH : DRAWER_MINI_WIDTH
+        }
+    },
+    logo: {
+        transition: {
+            open: {
+                width: '100%',
+                maxWidth: '100px',
+            },
+            closed: {
+                width: '50%',
+                maxWidth: '32px',
+            },
+            common: {
+                minWidth: '32px',
+                height: 'auto',
+                transition: 'width 0.3s, max-width 0.3s'
+            }
+        }
+    },
+    drawerControlIcon: {
+        container: {
+            display: 'flex',
+            justifyContent: 'flex-end',
+            padding: '8px'
+        }
+    }
+};

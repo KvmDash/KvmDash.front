@@ -159,7 +159,7 @@ const IsoImages: FC = (): ReactElement => {
     };
 
     return (
-        <Box sx={{ flexGrow: 1, padding: 4, display: 'grid', gap: 2 }}>
+        <Box sx={{ flexGrow: 1, padding: 4, display: 'grid', gap: 4 }}>
             <Card>
                 <CardHeader title="Boot Image hochladen" />
                 <CardContent>

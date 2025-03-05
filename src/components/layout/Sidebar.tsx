@@ -32,7 +32,6 @@ import { getVirtualMachines } from '@services/virtualization';
 import { TokenStorage } from '@services/tokenStorage'
 
 
-const drawerWidth = 240;
 
 interface SidebarProps {
     open: boolean;
@@ -102,9 +101,10 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
             anchor="left"
             open={open}
             sx={{
-                width: open ? drawerWidth : '64px',
+                width: sidebarStyles.drawer.width(open),
                 '& .MuiDrawer-paper': {
-                    width: open ? drawerWidth : '64px'
+                    ...sidebarStyles.drawer.paper,
+                    width: sidebarStyles.drawer.width(open)
                 }
             }}
         >
