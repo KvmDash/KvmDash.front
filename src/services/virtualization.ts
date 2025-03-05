@@ -298,3 +298,39 @@ export const getVmDetails = async (vmName: string): Promise<VmStats> => {
         return handleApiError(error as ApiError);
     }
 };
+
+
+export const getSpiceConnection = async (vmName: string): Promise<{
+    spicePort: number;
+    wsPort: number;
+    host: string;
+}> => {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        throw new Error('Kein Auth-Token gefunden');
+    }
+    
+    try {
+        const response = await fetch(`/api/virt/domain/${vmName}/spice`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                statusText: response.statusText
+            };
+        }
+
+        return await response.json();
+    } catch (error) {
+        if (error instanceof Error) {
+            throw error;
+        }
+        return handleApiError(error as ApiError);
+    }
+};
