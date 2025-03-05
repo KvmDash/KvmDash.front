@@ -1,4 +1,6 @@
 import { useState, useEffect, JSX } from 'react';
+import { Link } from 'react-router-dom';
+
 import {
     Box, Card, CardContent, CardHeader, Typography,
     Chip, IconButton, CardActions, CircularProgress,
@@ -154,7 +156,17 @@ export default function VmContent(): JSX.Element {
                         <Grid size={{ xs: 12, sm: 6, md: 4 }} key={vmName}>
                             <Card elevation={3}>
                                 <CardHeader
-                                    title={vmName}
+                                    title={
+                                        <Link
+                                            to={`/vm/${vmName}`}
+                                            style={{
+                                                textDecoration: 'underline',
+                                                color: 'inherit'
+                                            }}
+                                        >
+                                            {vmName}
+                                        </Link>
+                                    }
                                     action={
                                         <Chip
                                             label={getStatusText(vmData['state.state'])}
