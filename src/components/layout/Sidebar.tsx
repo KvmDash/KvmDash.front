@@ -59,8 +59,8 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
         };
 
         fetchVMs();
-        // Aktualisierung alle 10 Sekunden
-        const interval = setInterval(fetchVMs, 10000);
+        // Aktualisierung alle 5 Sekunden
+        const interval = setInterval(fetchVMs, 5000);
         return () => clearInterval(interval);
     }, []);
 
