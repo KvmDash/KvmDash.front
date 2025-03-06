@@ -1,5 +1,5 @@
 import { JSX, useEffect, useRef } from 'react';
-import { SpiceMainConn } from '@assets/spice-html5/src/main';
+import { SpiceMainConn, SpiceAgent } from '@assets/spice-html5/src/main';
 //import { SpiceMainConn } from 'spice-html5/src/main';
 
 interface SpiceViewerProps {
@@ -9,15 +9,6 @@ interface SpiceViewerProps {
 }
 
 
-interface SpiceAgent {
-    connect_display?: (display: HTMLElement) => boolean;  
-    main?: {
-        connect_display: (display: HTMLElement) => boolean;  
-        agent?: {
-            connect_display: (display: HTMLElement) => boolean; 
-        }
-    };
-}
 
 const createSpiceDisplay = (container: HTMLDivElement): HTMLDivElement => {
     const display = document.createElement('div');
@@ -59,7 +50,7 @@ const createMessageDiv = (container: HTMLDivElement): HTMLDivElement => {
 
 export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Element => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const spiceConnectionRef = useRef<any>(null);
+    const spiceConnectionRef = useRef<SpiceMainConn | null>(null);
     const renderLoopRef = useRef<number | undefined>(undefined); // Animation Frame Referenz
 
     useEffect(() => {
@@ -140,7 +131,7 @@ export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Ele
                         return (display: HTMLElement) => {
                             if (agent.main) {
                                 // Versuche display direkt zu setzen
-                                (agent.main as any).display = display;
+                                agent.main.display = display;
                                 return true;
                             }
                             return false;
