@@ -28,7 +28,10 @@ const createSpiceDisplay = (container: HTMLDivElement): HTMLDivElement => {
         left: '50%',             // Horizontale Zentrierung
         transform: 'translate(-50%, -50%)', // Perfekte Zentrierung
         width: '100%',
-        height: '100%'
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
     });
     container.appendChild(display);
     return display;
@@ -160,6 +163,17 @@ export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Ele
                                     displayConnector(display);
                                     isConnected = true;
                                     console.log('🔗 Display verbunden');
+                                    
+                                    // Canvas anpassen
+                                    const canvas = display.querySelector('canvas');
+                                    if (canvas) {
+                                        Object.assign(canvas.style, {
+                                            maxWidth: '100%',
+                                            maxHeight: '100%',
+                                            width: 'auto',
+                                            height: 'auto'
+                                        });
+                                    }
                                 } else {
                                     throw new Error('Display ist kein HTMLElement');
                                 }
@@ -232,7 +246,10 @@ export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Ele
                 overflow: 'hidden',
                 backgroundColor: '#000',
                 position: 'relative',
-                margin: '0 auto'
+                margin: '0 auto',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
             }}
         />
     );
