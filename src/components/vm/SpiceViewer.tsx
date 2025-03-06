@@ -224,13 +224,15 @@ export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Ele
             ref={containerRef}
             style={{
                 width: '100%',
-                height: '800px',          // Feste Höhe statt 100vh
-                maxWidth: '1280px',       // Kleinere max-width
+                height: '100%',           // Volle Höhe des Containers
+                aspectRatio: '16/9',      // 16:9 Seitenverhältnis
+                maxWidth: '1920px',       // Full HD Breite
+                maxHeight: '1080px',      // Full HD Höhe
                 border: '1px solid #ccc',
                 overflow: 'hidden',
                 backgroundColor: '#000',
                 position: 'relative',
-                margin: '0 auto'          // Nur horizontale Zentrierung
+                margin: '0 auto'
             }}
         />
     );
