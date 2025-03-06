@@ -188,7 +188,14 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                 disabled={isLoading}
                                 InputProps={{
                                     endAdornment: isLoading && (
-                                        <MuiBox sx={{ display: 'flex', padding: 1 }}>
+                                        <MuiBox sx={{ 
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            width: '100%',
+                                            position: 'absolute',
+                                            left: 0
+                                        }}>
                                             <CircularProgress size={20} />
                                         </MuiBox>
                                     )
@@ -228,7 +235,18 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                             ...params.InputProps,
                                             endAdornment: (
                                                 <>
-                                                    {isLoading && <CircularProgress size={20} />}
+                                                    {isLoading && (
+                                                        <MuiBox sx={{ 
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            width: '100%',
+                                                            position: 'absolute',
+                                                            left: 0
+                                                        }}>
+                                                            <CircularProgress size={20} />
+                                                        </MuiBox>
+                                                    )}
                                                     {params.InputProps.endAdornment}
                                                 </>
                                             )
