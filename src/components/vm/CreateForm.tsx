@@ -188,7 +188,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                 disabled={isLoading}
                                 InputProps={{
                                     endAdornment: isLoading && (
-                                        <MuiBox sx={{ 
+                                        <MuiBox sx={{
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
@@ -217,7 +217,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                 fullWidth
                                 options={osVariants}
                                 value={formData.os_variant}
-                                onChange={(event, newValue) => {
+                                onChange={(_, newValue) => {  // Unterstriche für ungenutzte Parameter
                                     setFormData(prev => ({
                                         ...prev,
                                         os_variant: newValue || ''
@@ -236,7 +236,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                             endAdornment: (
                                                 <>
                                                     {isLoading && (
-                                                        <MuiBox sx={{ 
+                                                        <MuiBox sx={{
                                                             display: 'flex',
                                                             alignItems: 'center',
                                                             justifyContent: 'center',

@@ -1,6 +1,15 @@
 import { SystemInfo, CpuData, MemData, DiskData } from '@interfaces/host.types';
 import { handleApiError } from '@services/auth/handleApiError';
+import { ApiError } from '@interfaces/api.types';
 
+// zuerst eine Typprüfung
+function isApiError(error: unknown): error is ApiError {
+    return (
+        typeof error === 'object' &&
+        error !== null &&
+        ('status' in error || 'message' in error)
+    );
+}
 
 /**
  * Holt die Systeminformationen vom Backend
@@ -9,7 +18,7 @@ import { handleApiError } from '@services/auth/handleApiError';
  */
 export const getSystemInfo = async (): Promise<SystemInfo> => {
     const token = localStorage.getItem('jwt_token');
-    
+
     if (!token) {
         throw new Error('Kein Auth-Token gefunden');
     }
@@ -32,7 +41,12 @@ export const getSystemInfo = async (): Promise<SystemInfo> => {
 
         return response.json();
     } catch (error) {
-        return handleApiError(error);
+        // Typgeprüfte Fehlerbehandlung
+        if (isApiError(error)) {
+            return handleApiError(error);
+        }
+        // Fallback für andere Fehlertypen
+        throw new Error(`Unerwarteter Fehler: ${String(error)}`);
     }
 };
 
@@ -44,7 +58,7 @@ export const getSystemInfo = async (): Promise<SystemInfo> => {
  */
 export const getCpuInfo = async (): Promise<CpuData[]> => {
     const token = localStorage.getItem('jwt_token');
-    
+
     if (!token) {
         throw new Error('Kein Auth-Token gefunden');
     }
@@ -67,7 +81,11 @@ export const getCpuInfo = async (): Promise<CpuData[]> => {
 
         return response.json();
     } catch (error) {
-        return handleApiError(error);
+        if (isApiError(error)) {
+            return handleApiError(error);
+        }
+        // Fallback für andere Fehlertypen
+        throw new Error(`Unerwarteter Fehler: ${String(error)}`);
     }
 };
 
@@ -81,7 +99,7 @@ export const getCpuInfo = async (): Promise<CpuData[]> => {
  */
 export const getMemInfo = async (): Promise<MemData> => {
     const token = localStorage.getItem('jwt_token');
-    
+
     if (!token) {
         throw new Error('Kein Auth-Token gefunden');
     }
@@ -104,7 +122,11 @@ export const getMemInfo = async (): Promise<MemData> => {
 
         return response.json();
     } catch (error) {
-        return handleApiError(error);
+        if (isApiError(error)) {
+            return handleApiError(error);
+        }
+        // Fallback für andere Fehlertypen
+        throw new Error(`Unerwarteter Fehler: ${String(error)}`);
     }
 };
 
@@ -117,7 +139,7 @@ export const getMemInfo = async (): Promise<MemData> => {
  */
 export const getDiskInfo = async (): Promise<DiskData[]> => {
     const token = localStorage.getItem('jwt_token');
-    
+
     if (!token) {
         throw new Error('Kein Auth-Token gefunden');
     }
@@ -140,6 +162,10 @@ export const getDiskInfo = async (): Promise<DiskData[]> => {
 
         return response.json();
     } catch (error) {
-        return handleApiError(error);
+        if (isApiError(error)) {
+            return handleApiError(error);
+        }
+        // Fallback für andere Fehlertypen
+        throw new Error(`Unerwarteter Fehler: ${String(error)}`);
     }
 };
