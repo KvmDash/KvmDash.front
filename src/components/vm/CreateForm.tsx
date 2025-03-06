@@ -7,7 +7,9 @@ import {
     Button,
     MenuItem,
     Box,
-    Autocomplete
+    Autocomplete,
+    CircularProgress,
+    Box as MuiBox
 } from '@mui/material';
 import ComputerIcon from '@mui/icons-material/Computer';
 import Grid from '@mui/material/Grid2';
@@ -184,6 +186,13 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                 onChange={handleChange}
                                 required
                                 disabled={isLoading}
+                                InputProps={{
+                                    endAdornment: isLoading && (
+                                        <MuiBox sx={{ display: 'flex', padding: 1 }}>
+                                            <CircularProgress size={20} />
+                                        </MuiBox>
+                                    )
+                                }}
                             >
                                 {isLoading ? (
                                     <MenuItem disabled>Lade ISO-Dateien...</MenuItem>
@@ -215,6 +224,15 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                         required
                                         error={isLoading}
                                         helperText={isLoading ? 'Lade Betriebssysteme...' : ''}
+                                        InputProps={{
+                                            ...params.InputProps,
+                                            endAdornment: (
+                                                <>
+                                                    {isLoading && <CircularProgress size={20} />}
+                                                    {params.InputProps.endAdornment}
+                                                </>
+                                            )
+                                        }}
                                     />
                                 )}
                             />
