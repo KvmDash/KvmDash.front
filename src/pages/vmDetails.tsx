@@ -8,7 +8,7 @@ import { Box, Card, CardContent, CardHeader} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
 import { BACKEND_HOST } from '@/config';
-
+import VmMetrics from '../components/vm/VmMetrics';  // Nur noch default import
 
 export default function VmDetailsPage() {
     const { vmName } = useParams<{ vmName: string }>();
@@ -27,11 +27,8 @@ export default function VmDetailsPage() {
 
             try {
                 setLoading(true);
-                // Erst VM Details holen
                 const details = await getVmDetails(vmName);
                 setVmDetails(details);
-
-                // Dann WebSocket erstellen/verbinden
                 const spiceInfo = await getSpiceConnection(vmName);
                 setSpiceConnection(spiceInfo);
             } catch (err) {
@@ -48,10 +45,14 @@ export default function VmDetailsPage() {
     if (error) return <div>Fehler: {error}</div>;
     if (!vmDetails || !spiceConnection) return <div>Keine Verbindung möglich</div>;
 
-
     return (
         <Box sx={{ flexGrow: 1, p: 4 }}>
             <Grid container spacing={2}>
+                <Grid size={{ xs: 12 }}>
+                    <VmMetrics vmName={vmName!} initialStats={vmDetails} />
+                </Grid>
+
+                {/* SPICE Remote Konsole */}
                 <Grid size={{ xs: 12 }}>
                     <Card elevation={3}>
                         <CardHeader
@@ -59,10 +60,10 @@ export default function VmDetailsPage() {
                             avatar={<DisplaySettingsIcon color="primary" />}
                         />
                         <CardContent>
-                        <SpiceViewer
-                            host={BACKEND_HOST}
-                            port={spiceConnection.wsPort}
-                        />
+                            <SpiceViewer
+                                host={BACKEND_HOST}
+                                port={spiceConnection.wsPort}
+                            />
                         </CardContent>
                     </Card>
                 </Grid>
