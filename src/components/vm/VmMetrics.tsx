@@ -30,19 +30,9 @@ export default function VmMetrics({ vmName, initialStats }: VmMetricsProps) {
 
     return (
         <Grid container spacing={2}>
-            <Grid size={{ xs: 4 }}>
-                <Card elevation={3}>
-                    <CardHeader
-                        title="Network Details"
-                        avatar={<DisplaySettingsIcon color="primary" />}
-                    />
-                    <CardContent>
-                        TODO Network Details
-                    </CardContent>
-                </Card>
-            </Grid>
 
-            <Grid size={{ xs: 4 }}>
+
+            <Grid size={{ xs: 6 }}>
                 <Card elevation={3}>
                     <CardHeader
                         title="RAM"
@@ -54,7 +44,7 @@ export default function VmMetrics({ vmName, initialStats }: VmMetricsProps) {
                 </Card>
             </Grid>
 
-            <Grid size={{ xs: 4 }}>
+            <Grid size={{ xs: 6 }}>
                 <Card elevation={3}>
                     <CardHeader
                         title="CPU"
