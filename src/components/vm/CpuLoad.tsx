@@ -6,6 +6,15 @@ interface CpuLoadProps {
     stats: VmStats;
 }
 
+/**
+ * Bestimmt die Farbe basierend auf der CPU-Auslastung
+ */
+const getUsageColor = (usage: number): string => {
+    if (usage > 80) return '#ff4444';     // Rot bei hoher Last
+    if (usage > 60) return '#ffaa00';     // Orange bei mittlerer Last
+    return '#00c853';                     // Grün bei niedriger Last
+};
+
 export default function CpuLoad({ stats }: CpuLoadProps) {
     const [lastCpuTime, setLastCpuTime] = useState(stats.stats.cpu_time);
     const [lastUpdate, setLastUpdate] = useState(Date.now());
@@ -37,7 +46,14 @@ export default function CpuLoad({ stats }: CpuLoadProps) {
                 <LinearProgress 
                     variant="determinate" 
                     value={cpuUsage} 
-                    sx={{ height: 10, borderRadius: 5 }}
+                    sx={{
+                        height: 10,
+                        borderRadius: 5,
+                        backgroundColor: 'surface.main',  // Hellgrauer Hintergrund
+                        '& .MuiLinearProgress-bar': {
+                            backgroundColor: getUsageColor(cpuUsage)
+                        }
+                    }}
                 />
             </Box>
             
