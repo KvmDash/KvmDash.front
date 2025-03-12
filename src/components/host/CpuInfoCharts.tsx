@@ -107,8 +107,39 @@ export const CpuInfo = () => {
         .sort((a, b) => {
             if (a === 'Total') return -1;
             if (b === 'Total') return 1;
-            return a.localeCompare(b);
+            
+            // Numerische Sortierung statt lexikographischer Sortierung
+            const numA = parseInt(a.replace('Core ', ''), 10);
+            const numB = parseInt(b.replace('Core ', ''), 10);
+            
+            return numA - numB;
         });
+
+    // Benutzerdefinierter Tooltip mit angepasstem Styling
+    const CustomTooltip = ({ active, payload, label }: any) => {
+        if (active && payload && payload.length) {
+            return (
+                <div style={{ 
+                    backgroundColor: 'rgba(40, 40, 40, 0.9)', 
+                    padding: '8px', 
+                    border: '1px solid #444',
+                    borderRadius: '5px',
+                    color: 'white',
+                    fontSize: '12px' // Kleinere Schriftgröße
+                }}>
+                    {/* Zeit nur anzeigen, wenn wir im ersten Tab (Aktuelle Auslastung) sind */}
+                    {activeTab === 0 && label && <p style={{ margin: '2px 0' }}>{`${label}`}</p>}
+                    
+                    {payload.map((entry: any, index: number) => (
+                        <p key={`item-${index}`} style={{ color: entry.color || entry.stroke, margin: '2px 0' }}>
+                            {`${entry.name || entry.dataKey}: ${parseFloat(entry.value).toFixed(1)}%`}
+                        </p>
+                    ))}
+                </div>
+            );
+        }
+        return null;
+    };
 
     return (
         <Box sx={{ flexGrow: 1, p: 2 }}>
@@ -133,19 +164,30 @@ export const CpuInfo = () => {
                         <>
                             {activeTab === 0 ? (
                                 // Balkendiagramm für aktuelle Auslastung
-                                <Box sx={{ width: '100%', height: 350 }}>
+                                <Box sx={{ 
+                                    width: '100%', 
+                                    height: 350,
+                                    '& .recharts-wrapper': {
+                                        backgroundColor: 'transparent',
+                                    },
+                                    '& .recharts-surface': {
+                                        backgroundColor: 'transparent',
+                                    }
+                                }}>
                                     <ResponsiveContainer>
                                         <BarChart
                                             data={barChartData}
                                             layout="vertical"
                                             margin={{ top: 20, right: 30, left: 50, bottom: 5 }}
+                                            style={{ backgroundColor: 'transparent' }}
+                                            background={{ fill: 'transparent' }}
                                         >
-                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#444" />
                                             <XAxis type="number" domain={[0, 100]} tickCount={11} unit="%" />
                                             <YAxis dataKey="name" type="category" />
                                             <Tooltip 
-                                                formatter={(value: number) => [`${value.toFixed(1)}%`, 'Auslastung']} 
-                                                labelFormatter={(name) => `${name}`}
+                                                content={<CustomTooltip />}
+                                                cursor={{ fill: 'rgba(50, 50, 50, 0.3)' }}
                                             />
                                             <Legend />
                                             <Bar 
@@ -167,16 +209,29 @@ export const CpuInfo = () => {
                                 </Box>
                             ) : (
                                 // Liniendiagramm für den Verlauf
-                                <Box sx={{ width: '100%', height: 350 }}>
+                                <Box sx={{ 
+                                    width: '100%', 
+                                    height: 350,
+                                    '& .recharts-wrapper': {
+                                        backgroundColor: 'transparent',
+                                    },
+                                    '& .recharts-surface': {
+                                        backgroundColor: 'transparent',
+                                    }
+                                }}>
                                     <ResponsiveContainer>
                                         <LineChart
                                             data={lineChartData}
                                             margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                                            style={{ backgroundColor: 'transparent' }}
                                         >
-                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#444" />
                                             <XAxis dataKey="timestamp" label={{ value: 'Zeit', position: 'insideBottomRight', offset: -5 }} />
                                             <YAxis domain={[0, 100]} tickCount={11} label={{ value: 'Auslastung (%)', angle: -90, position: 'insideLeft' }} />
-                                            <Tooltip formatter={(value: number) => `${value.toFixed(1)}%`} />
+                                            <Tooltip 
+                                                content={<CustomTooltip />}
+                                                cursor={{ stroke: 'rgba(50, 50, 50, 0.3)', strokeWidth: 2 }}
+                                            />
                                             <Legend />
                                             {coreNames.map((core, index) => (
                                                 <Line 

@@ -68,16 +68,17 @@ export const MemInfo = () => {
             return (
                 <div style={{ 
                     backgroundColor: 'rgba(40, 40, 40, 0.9)', 
-                    padding: '10px', 
+                    padding: '8px', 
                     border: '1px solid #444',
                     borderRadius: '5px',
-                    color: 'white'
+                    color: 'white',
+                    fontSize: '12px' // Kleinere Schriftgröße
                 }}>
                     {/* Prüfe, ob label definiert ist, sonst zeige nichts an */}
-                    {label && <p>{`${label}`}</p>}
+                    {label && <p style={{ margin: '2px 0' }}>{`${label}`}</p>}
                     
                     {payload.map((entry: any, index: number) => (
-                        <p key={`item-${index}`} style={{ color: entry.color }}>
+                        <p key={`item-${index}`} style={{ color: entry.color, margin: '2px 0' }}>
                             {/* Zeige den Namen der Payload-Daten an (verwendet/verfügbar) */}
                             {`${entry.name || entry.dataKey}: ${parseFloat(entry.value).toFixed(2)}G`}
                         </p>
