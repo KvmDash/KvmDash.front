@@ -72,8 +72,27 @@ export const DiskInfo = () => {
     
     const COLORS = ['#ff4444', '#00c853'];
 
-    // Benutzerdefinierter Tooltip mit angepasstem Styling
-    const CustomTooltip = ({ active, payload, label }: any) => {
+    // Besser typisiertes Interface für die Chart-Daten
+    interface ChartDataEntry {
+        name: string;
+        value: number;
+    }
+
+    // Definiere ein Interface für die Tooltip-Props mit verbesserten Typen
+    interface TooltipProps {
+        active?: boolean;
+        payload?: {
+            name: string;
+            value: number;
+            payload?: ChartDataEntry;  // Ersetze any durch unseren eigenen Typ
+            color?: string;
+            dataKey?: string;
+        }[];
+        label?: string | number | null;  // Ersetze any durch spezifischere Typen
+    }
+
+    // Benutzerdefinierter Tooltip mit angepasstem Styling und verbesserter Typisierung
+    const CustomTooltip = ({ active, payload }: TooltipProps) => {
         if (active && payload && payload.length) {
             return (
                 <div style={{ 
@@ -84,7 +103,7 @@ export const DiskInfo = () => {
                     color: 'white',
                     fontSize: '12px'
                 }}>
-                    {payload.map((entry: any, index: number) => (
+                    {payload.map((entry, index) => (
                         <p key={`item-${index}`} style={{ color: entry.color, margin: '2px 0' }}>
                             {`${entry.name}: ${entry.value}%`}
                         </p>
@@ -142,7 +161,7 @@ export const DiskInfo = () => {
                                                     paddingAngle={5}
                                                     dataKey="value"
                                                 >
-                                                    {prepareChartData(disk).map((entry, index) => (
+                                                    {prepareChartData(disk).map((_, index) => (
                                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                                     ))}
                                                 </Pie>
