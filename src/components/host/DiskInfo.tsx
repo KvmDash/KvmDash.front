@@ -48,7 +48,7 @@ export const DiskInfo = () => {
     if (error) {
         return (
             <Box sx={{ flexGrow: 1, p: 2 }}>
-                <Card elevation={3} sx={{ borderRadius: 3 }}>
+                <Card elevation={3} sx={{ borderRadius: 3}}>
                     <CardHeader title="Festplatteninformationen" />
                     <CardContent>
                         <Alert severity="error">{error}</Alert>
@@ -60,7 +60,7 @@ export const DiskInfo = () => {
 
     return (
         <Box sx={{ flexGrow: 1, p: 2 }}>
-            <Card elevation={3} sx={{ borderRadius: 3 }}>
+            <Card elevation={3} sx={{ borderRadius: 3,  minHeight: 360 }}>
                 <CardHeader title="Festplatteninformationen" />
                 <CardContent>
                     <Grid container spacing={2}>

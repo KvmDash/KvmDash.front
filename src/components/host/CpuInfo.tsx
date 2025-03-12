@@ -44,7 +44,7 @@ export const CpuInfo = () => {
 
     return (
         <Box sx={{ flexGrow: 1, p: 2 }}>
-            <Card elevation={3} sx={{ borderRadius: 3 }}>
+            <Card elevation={3} sx={{ borderRadius: 3,  minHeight: 350 }}>
                 <CardHeader title="CPU Auslastung" />
                 <CardContent>
                     {loading ? (

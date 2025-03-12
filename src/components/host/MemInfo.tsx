@@ -45,7 +45,7 @@ export const MemInfo = () => {
 
     return (
         <Box sx={{ flexGrow: 1, p: 2 }}>
-            <Card elevation={3} sx={{ borderRadius: 3 }}>
+            <Card elevation={3} sx={{ borderRadius: 3,  minHeight: 250 }}>
                 <CardHeader title="Speicherinformationen" />
                 <CardContent>
                 {loading ? (
