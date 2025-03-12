@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid2'
 import HostInfo from '@components/host/HostInfo'   
 import CpuInfo from '@/components/host/CpuInfoCharts' 
 import MemInfo from '@/components/host/MemInfo'
-import DiskInfo from '@/components/host/DiskInfo'
+import DiskInfo from '@/components/host/DiskInfoCharts'
 
 export default function Home() {
     return (
