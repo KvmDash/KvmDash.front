@@ -27,6 +27,27 @@ interface LineChartDataPoint {
     [key: string]: string | number;  // Für dynamische Core-Namen
 }
 
+// Define interfaces for chart data
+interface CpuChartDataEntry {
+    name: string;
+    usage: number;
+    color: string;
+}
+
+// Define interface for tooltip props
+interface TooltipProps {
+    active?: boolean;
+    payload?: {
+        name: string;
+        value: number;
+        payload?: CpuChartDataEntry;
+        color?: string;
+        stroke?: string;
+        dataKey?: string;
+    }[];
+    label?: string | number | null;
+}
+
 export const CpuInfo = () => {
     const [cpuData, setCpuData] = useState<CpuData[]>([]);
     const [historicalData, setHistoricalData] = useState<HistoricalCpuData[]>([]);
@@ -72,7 +93,7 @@ export const CpuInfo = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
         setActiveTab(newValue);
     };
 
@@ -116,7 +137,7 @@ export const CpuInfo = () => {
         });
 
     // Benutzerdefinierter Tooltip mit angepasstem Styling
-    const CustomTooltip = ({ active, payload, label }: any) => {
+    const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
         if (active && payload && payload.length) {
             return (
                 <div style={{ 
@@ -130,9 +151,9 @@ export const CpuInfo = () => {
                     {/* Zeit nur anzeigen, wenn wir im ersten Tab (Aktuelle Auslastung) sind */}
                     {activeTab === 0 && label && <p style={{ margin: '2px 0' }}>{`${label}`}</p>}
                     
-                    {payload.map((entry: any, index: number) => (
+                    {payload.map((entry, index) => (
                         <p key={`item-${index}`} style={{ color: entry.color || entry.stroke, margin: '2px 0' }}>
-                            {`${entry.name || entry.dataKey}: ${parseFloat(entry.value).toFixed(1)}%`}
+                            {`${entry.name || entry.dataKey}: ${parseFloat(entry.value.toString()).toFixed(1)}%`}
                         </p>
                     ))}
                 </div>
@@ -180,7 +201,6 @@ export const CpuInfo = () => {
                                             layout="vertical"
                                             margin={{ top: 20, right: 30, left: 50, bottom: 5 }}
                                             style={{ backgroundColor: 'transparent' }}
-                                            background={{ fill: 'transparent' }}
                                         >
                                             <CartesianGrid strokeDasharray="3 3" stroke="#444" />
                                             <XAxis type="number" domain={[0, 100]} tickCount={11} unit="%" />

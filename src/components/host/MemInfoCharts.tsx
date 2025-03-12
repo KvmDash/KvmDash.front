@@ -32,7 +32,7 @@ export const MemInfo = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
         setActiveTab(newValue);
     };
 
@@ -62,8 +62,23 @@ export const MemInfo = () => {
 
     const COLORS = ['#ff4444', '#00c853'];
 
+    // Interface für die Tooltip-Props
+    interface TooltipProps {
+        active?: boolean;
+        payload?: Array<PayloadEntry>;
+        label?: string;
+    }
+
+    // Interface für die Payload-Einträge
+    interface PayloadEntry {
+        name?: string;
+        value: number;
+        dataKey?: string;
+        color?: string;
+    }
+
     // Benutzerdefinierter Tooltip mit angepasstem Styling
-    const CustomTooltip = ({ active, payload, label }: any) => {
+    const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
         if (active && payload && payload.length) {
             return (
                 <div style={{ 
@@ -77,10 +92,10 @@ export const MemInfo = () => {
                     {/* Prüfe, ob label definiert ist, sonst zeige nichts an */}
                     {label && <p style={{ margin: '2px 0' }}>{`${label}`}</p>}
                     
-                    {payload.map((entry: any, index: number) => (
+                    {payload.map((entry: PayloadEntry, index: number) => (
                         <p key={`item-${index}`} style={{ color: entry.color, margin: '2px 0' }}>
                             {/* Zeige den Namen der Payload-Daten an (verwendet/verfügbar) */}
-                            {`${entry.name || entry.dataKey}: ${parseFloat(entry.value).toFixed(2)}G`}
+                            {`${entry.name || entry.dataKey}: ${parseFloat(entry.value.toString()).toFixed(2)}G`}
                         </p>
                     ))}
                 </div>
@@ -138,7 +153,7 @@ export const MemInfo = () => {
                                                 fill="#8884d8"
                                                 dataKey="value"
                                             >
-                                                {getPieChartData().map((entry, index) => (
+                                                {getPieChartData().map((_, index) => (
                                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                                 ))}
                                             </Pie>
@@ -170,8 +185,7 @@ export const MemInfo = () => {
                                         <BarChart 
                                             data={getBarChartData()}
                                             style={{ backgroundColor: 'transparent' }}
-                                            // Setzt explizit einen transparenten Hintergrund
-                                            background={{ fill: 'transparent' }}
+                                            // Die Prop "background" entfernen, da sie nicht unterstützt wird
                                         >
                                             <CartesianGrid strokeDasharray="3 3" stroke="#444" />
                                             <XAxis dataKey="name" />
