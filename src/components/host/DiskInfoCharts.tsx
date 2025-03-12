@@ -72,6 +72,29 @@ export const DiskInfo = () => {
     
     const COLORS = ['#ff4444', '#00c853'];
 
+    // Benutzerdefinierter Tooltip mit angepasstem Styling
+    const CustomTooltip = ({ active, payload, label }: any) => {
+        if (active && payload && payload.length) {
+            return (
+                <div style={{ 
+                    backgroundColor: 'rgba(40, 40, 40, 0.9)', 
+                    padding: '8px', 
+                    border: '1px solid #444',
+                    borderRadius: '5px',
+                    color: 'white',
+                    fontSize: '12px'
+                }}>
+                    {payload.map((entry: any, index: number) => (
+                        <p key={`item-${index}`} style={{ color: entry.color, margin: '2px 0' }}>
+                            {`${entry.name}: ${entry.value}%`}
+                        </p>
+                    ))}
+                </div>
+            );
+        }
+        return null;
+    };
+
     return (
         <Box sx={{ flexGrow: 1, p: 2 }}>
             <Card elevation={3} sx={{ borderRadius: 3,  minHeight: 360 }}>
@@ -96,7 +119,18 @@ export const DiskInfo = () => {
                                             ({disk.Filesystem})
                                         </Typography>
                                     </Box>
-                                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: 180 }}>
+                                    <Box sx={{ 
+                                        display: 'flex', 
+                                        flexDirection: 'column', 
+                                        alignItems: 'center', 
+                                        height: 180,
+                                        '& .recharts-wrapper': {
+                                            backgroundColor: 'transparent',
+                                        },
+                                        '& .recharts-surface': {
+                                            backgroundColor: 'transparent',
+                                        }
+                                    }}>
                                         <ResponsiveContainer width="100%" height="100%">
                                             <PieChart margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
                                                 <Pie
@@ -112,7 +146,7 @@ export const DiskInfo = () => {
                                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                                     ))}
                                                 </Pie>
-                                                <Tooltip formatter={(value) => `${value}%`} />
+                                                <Tooltip content={<CustomTooltip />} />
                                                 <Legend verticalAlign="bottom" height={36} />
                                                 <text 
                                                     x="50%" 
