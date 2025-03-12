@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import Grid from '@mui/material/Grid2'
 import HostInfo from '@components/host/HostInfo'   
-import CpuInfo from '@/components/host/CpuInfo' 
+import CpuInfo from '@/components/host/CpuInfoCharts' 
 import MemInfo from '@/components/host/MemInfo'
 import DiskInfo from '@/components/host/DiskInfo'
 
