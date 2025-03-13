@@ -1,4 +1,4 @@
-import { LinearProgress, Typography, Box, Stack } from '@mui/material';
+import { LinearProgress, Typography, Box } from '@mui/material';
 import type { VmStats } from '../../types/vm.types';
 
 interface RamLoadProps {
@@ -14,32 +14,68 @@ export default function RamLoad({ stats }: RamLoadProps) {
     const ramUsagePercent = (stats.stats.memory_usage / stats.stats.max_memory) * 100;
 
     return (    
-        <Stack spacing={2}>
-            <Typography variant="body2" color="text.secondary">
-                Gesamt RAM: {totalRamGB} GB
-            </Typography>
-            
-            <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
+        <Box sx={{ width: '100%' }}>
+            <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                mb: 0.5
+            }}>
+                <Typography variant="body2" fontWeight="medium">
                     RAM Auslastung: {ramUsagePercent.toFixed(1)}%
                 </Typography>
-                <LinearProgress 
-                    variant="determinate" 
-                    value={ramUsagePercent}
-                    sx={{
-                        height: 10,
-                        borderRadius: 5,
-                        backgroundColor: '#00c853', // Grüner Hintergrund für freien Speicher
-                        '& .MuiLinearProgress-bar': {
-                            backgroundColor: '#ff4444'  // Roter Balken für belegten Speicher
-                        }
-                    }}
-                />
+                <Typography variant="body2" color="text.secondary">
+                    {usedRamGB} / {totalRamGB} GB
+                </Typography>
             </Box>
             
-            <Typography variant="body2" color="text.secondary">
-                Verwendet: {usedRamGB} /  {totalRamGB} GB
-            </Typography>
-          </Stack>
+            <LinearProgress
+                variant="determinate"
+                value={ramUsagePercent}
+                sx={{
+                    height: 15,
+                    borderRadius: 2,
+                    '& .MuiLinearProgress-bar': {
+                        backgroundColor: (theme) => {
+                            if (ramUsagePercent < 70) return theme.palette.success.main;
+                            if (ramUsagePercent < 90) return theme.palette.warning.main;
+                            return theme.palette.error.main;
+                        },
+                    },
+                    backgroundColor: 'rgba(0, 0, 0, 0.09)'
+                }}
+            />
+            
+            <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                mt: 1, 
+                color: 'text.secondary',
+                fontSize: '0.8rem'
+            }}>
+                <Typography variant="caption">
+                    0%
+                </Typography>
+                <Typography variant="caption">
+                    Belegt
+                </Typography>
+                <Typography variant="caption">
+                    100%
+                </Typography>
+            </Box>
+            
+            <Box sx={{ mt: 2 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    borderTop: '1px solid',
+                    borderColor: 'divider',
+                    pt: 1
+                }}>
+                    <span>Gesamt RAM:</span>
+                    <span style={{ fontWeight: 'bold' }}>{totalRamGB} GB</span>
+                </Typography>
+            </Box>
+        </Box>
     );
 }
