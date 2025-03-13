@@ -1,19 +1,10 @@
 import { useState, useEffect } from 'react';
-import { LinearProgress, Typography, Box, Stack } from '@mui/material';
+import { LinearProgress, Typography, Box } from '@mui/material';
 import type { VmStats } from '../../types/vm.types';
 
 interface CpuLoadProps {
     stats: VmStats;
 }
-
-/**
- * Bestimmt die Farbe basierend auf der CPU-Auslastung
- */
-const getUsageColor = (usage: number): string => {
-    if (usage > 80) return '#ff4444';     // Rot bei hoher Last
-    if (usage > 60) return '#ffaa00';     // Orange bei mittlerer Last
-    return '#00c853';                     // Grün bei niedriger Last
-};
 
 export default function CpuLoad({ stats }: CpuLoadProps) {
     const [lastCpuTime, setLastCpuTime] = useState(stats.stats.cpu_time);
@@ -34,32 +25,68 @@ export default function CpuLoad({ stats }: CpuLoadProps) {
     }, [stats]);
 
     return (    
-        <Stack spacing={2}>
-            <Typography variant="body2" color="text.secondary">
-                CPUs: {stats.cpuCount}
-            </Typography>
-            
-            <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
+        <Box sx={{ width: '100%' }}>
+            <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                mb: 0.5
+            }}>
+                <Typography variant="body2" fontWeight="medium">
                     CPU Auslastung: {cpuUsage.toFixed(1)}%
                 </Typography>
-                <LinearProgress 
-                    variant="determinate" 
-                    value={cpuUsage} 
-                    sx={{
-                        height: 10,
-                        borderRadius: 5,
-                        backgroundColor: 'surface.main',  // Hellgrauer Hintergrund
-                        '& .MuiLinearProgress-bar': {
-                            backgroundColor: getUsageColor(cpuUsage)
-                        }
-                    }}
-                />
+                <Typography variant="body2" color="text.secondary">
+                    CPU Zeit: {stats.stats.cpu_time.toFixed(2)}s
+                </Typography>
             </Box>
             
-            <Typography variant="body2" color="text.secondary">
-                CPU Zeit: {stats.stats.cpu_time.toFixed(2)}s
-            </Typography>
-        </Stack>
+            <LinearProgress
+                variant="determinate"
+                value={cpuUsage}
+                sx={{
+                    height: 15,
+                    borderRadius: 2,
+                    '& .MuiLinearProgress-bar': {
+                        backgroundColor: (theme) => {
+                            if (cpuUsage < 70) return theme.palette.success.main;
+                            if (cpuUsage < 90) return theme.palette.warning.main;
+                            return theme.palette.error.main;
+                        },
+                    },
+                    backgroundColor: 'rgba(0, 0, 0, 0.09)'
+                }}
+            />
+            
+            <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                mt: 1, 
+                color: 'text.secondary',
+                fontSize: '0.8rem'
+            }}>
+                <Typography variant="caption">
+                    0%
+                </Typography>
+                <Typography variant="caption">
+                    Belegt
+                </Typography>
+                <Typography variant="caption">
+                    100%
+                </Typography>
+            </Box>
+            
+            <Box sx={{ mt: 2 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    borderTop: '1px solid',
+                    borderColor: 'divider',
+                    pt: 1
+                }}>
+                    <span>CPUs:</span>
+                    <span style={{ fontWeight: 'bold' }}>{stats.cpuCount}</span>
+                </Typography>
+            </Box>
+        </Box>
     );
 }
