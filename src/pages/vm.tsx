@@ -5,7 +5,7 @@ import {
     Box, Card, CardContent, CardHeader, Typography,
     Chip, IconButton, CardActions, CircularProgress,
     Dialog, DialogTitle, DialogContent, DialogActions,
-    TextField, Button, Checkbox, FormControlLabel
+    TextField, Button, Checkbox, FormControlLabel, Tooltip
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 
@@ -88,7 +88,6 @@ export default function VmContent(): JSX.Element {
         }
     };
 
-    // Nach handleVmAction hinzufügen:
     const handleDeleteClick = (vmName: string): void => {
         setVmToDelete(vmName);
         setDeleteDialogOpen(true);
@@ -143,6 +142,10 @@ export default function VmContent(): JSX.Element {
         return (parseInt(memoryKB) / 1024 / 1024).toFixed(1) + ' GB';
     };
 
+    const isVmActive = (state: string): boolean => {
+        return state !== '5'; // VM ist aktiv wenn sie nicht heruntergefahren ist (state 5)
+    };
+
     return (
         <Box sx={{ flexGrow: 1, p: 4 }}>
             {error ? (
@@ -152,20 +155,43 @@ export default function VmContent(): JSX.Element {
                     <Grid size={{ xs: 12 }} >
                         <CreateForm onSubmit={handleCreateVm} />
                     </Grid>
-                    {Object.entries(vms).map(([vmName, vmData]: [string, VmStatus]) => (
+                    {Object.entries(vms).map(([vmName, vmData]: [string, VmStatus]) => {
+                        const isActive = isVmActive(vmData['state.state']);
+                        return (
                         <Grid size={{ xs: 12, sm: 6, md: 4 }} key={vmName}>
                             <Card elevation={3}>
                                 <CardHeader
                                     title={
-                                        <Link
-                                            to={`/vm/${vmName}`}
-                                            style={{
-                                                textDecoration: 'none',
-                                                color: 'inherit',
-                                            }}
-                                        >
-                                            {vmName}
-                                        </Link>
+                                        isActive ? (
+                                            <Link
+                                                to={`/vm/${vmName}`}
+                                                style={{
+                                                    textDecoration: 'none',
+                                                    color: 'inherit',
+                                                    display: 'block',
+                                                    fontSize: '1.25rem',
+                                                    fontWeight: 500,
+                                                    lineHeight: 1.6
+                                                }}
+                                            >
+                                                {vmName}
+                                            </Link>
+                                        ) : (
+                                            <Tooltip title="VM ist nicht aktiv" placement="top">
+                                                <Typography 
+                                                    sx={{ 
+                                                        opacity: 0.6,
+                                                        cursor: 'not-allowed',
+                                                        fontSize: '1.25rem',
+                                                        fontWeight: 500,
+                                                        lineHeight: 1.6,
+                                                        display: 'block'
+                                                    }}
+                                                >
+                                                    {vmName}
+                                                </Typography>
+                                            </Tooltip>
+                                        )
                                     }
                                     action={
                                         <Chip
@@ -174,6 +200,13 @@ export default function VmContent(): JSX.Element {
                                             size="small"
                                         />
                                     }
+                                    sx={{ 
+                                        '& .MuiCardHeader-content': {
+                                            minHeight: '40px', // Einheitliche Höhe für den Header
+                                            display: 'flex',
+                                            alignItems: 'center'
+                                        }
+                                    }}
                                 />
                                 <CardContent>
                                     <Typography variant="body2" color="text.secondary">
@@ -226,7 +259,8 @@ export default function VmContent(): JSX.Element {
                                 </CardActions>
                             </Card>
                         </Grid>
-                    ))}
+                        );
+                    })}
                 </Grid>
             )}
             <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
