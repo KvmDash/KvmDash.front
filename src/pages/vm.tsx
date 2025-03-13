@@ -215,9 +215,6 @@ export default function VmContent(): JSX.Element {
                                     <Typography variant="body2" color="text.secondary">
                                         vCPUs: {vmData['vcpu.current']}
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        IP: {vmData['ip'] || 'Nicht verfügbar'}
-                                    </Typography>
                                 </CardContent>
                                 <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <Box>
