@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, Box, Typography, LinearProgress, Alert }
 import Grid from '@mui/material/Grid2';
 import { DiskData } from '@interfaces/host.types';
 import { getDiskInfo } from '@services/host';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 export const DiskInfo = () => {
     const [diskData, setDiskData] = useState<DiskData[]>([]);
@@ -59,64 +58,9 @@ export const DiskInfo = () => {
         );
     }
 
-    // Daten für recharts aufbereiten
-    const prepareChartData = (disk: DiskData) => {
-        const usedPercentage = parseInt(disk.Use);
-        const freePercentage = 100 - usedPercentage;
-        
-        return [
-            { name: 'Belegt', value: usedPercentage },
-            { name: 'Frei', value: freePercentage }
-        ];
-    };
-    
-    const COLORS = ['#ff4444', '#00c853'];
-
-    // Besser typisiertes Interface für die Chart-Daten
-    interface ChartDataEntry {
-        name: string;
-        value: number;
-    }
-
-    // Definiere ein Interface für die Tooltip-Props mit verbesserten Typen
-    interface TooltipProps {
-        active?: boolean;
-        payload?: {
-            name: string;
-            value: number;
-            payload?: ChartDataEntry;  // Ersetze any durch unseren eigenen Typ
-            color?: string;
-            dataKey?: string;
-        }[];
-        label?: string | number | null;  // Ersetze any durch spezifischere Typen
-    }
-
-    // Benutzerdefinierter Tooltip mit angepasstem Styling und verbesserter Typisierung
-    const CustomTooltip = ({ active, payload }: TooltipProps) => {
-        if (active && payload && payload.length) {
-            return (
-                <div style={{ 
-                    backgroundColor: 'rgba(40, 40, 40, 0.9)', 
-                    padding: '8px', 
-                    border: '1px solid #444',
-                    borderRadius: '5px',
-                    color: 'white',
-                    fontSize: '12px'
-                }}>
-                    {payload.map((entry, index) => (
-                        <p key={`item-${index}`} style={{ color: entry.color, margin: '2px 0' }}>
-                            {`${entry.name}: ${entry.value}%`}
-                        </p>
-                    ))}
-                </div>
-            );
-        }
-        return null;
-    };
-
     return (
         <Box sx={{ flexGrow: 1, p: 2 }}>
-            <Card elevation={3} sx={{ borderRadius: 3,  minHeight: 360 }}>
+            <Card elevation={3} sx={{ borderRadius: 3, minHeight: 360 }}>
                 <CardHeader title="Festplatteninformationen" />
                 <CardContent>
                     <Grid container spacing={2}>
@@ -138,60 +82,70 @@ export const DiskInfo = () => {
                                             ({disk.Filesystem})
                                         </Typography>
                                     </Box>
-                                    <Box sx={{ 
-                                        display: 'flex', 
-                                        flexDirection: 'column', 
-                                        alignItems: 'center', 
-                                        height: 180,
-                                        '& .recharts-wrapper': {
-                                            backgroundColor: 'transparent',
-                                        },
-                                        '& .recharts-surface': {
-                                            backgroundColor: 'transparent',
-                                        }
-                                    }}>
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <PieChart margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
-                                                <Pie
-                                                    data={prepareChartData(disk)}
-                                                    cx="50%"
-                                                    cy="50%"
-                                                    innerRadius={40}
-                                                    outerRadius={60}
-                                                    paddingAngle={5}
-                                                    dataKey="value"
-                                                >
-                                                    {prepareChartData(disk).map((_, index) => (
-                                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                                    ))}
-                                                </Pie>
-                                                <Tooltip content={<CustomTooltip />} />
-                                                <Legend verticalAlign="bottom" height={36} />
-                                                <text 
-                                                    x="50%" 
-                                                    y="40%" 
-                                                    textAnchor="middle" 
-                                                    dominantBaseline="middle"
-                                                    style={{ fontSize: '14px', fontWeight: 'bold', fill: 'white' }}
-                                                >
-                                                    {disk.Use}
-                                                </text>
-                                                <text 
-                                                    x="50%" 
-                                                    y="40%" 
-                                                    dy="18" 
-                                                    textAnchor="middle" 
-                                                    dominantBaseline="middle"
-                                                    style={{ fontSize: '12px', fill: 'white' }}
-                                                >
-                                                    belegt
-                                                </text>
-                                            </PieChart>
-                                        </ResponsiveContainer>
+                                    
+                                    {/* Verbesserte Festplatten-Visualisierung mit Fortschrittsbalken */}
+                                    <Box sx={{ width: '100%', mt: 2 }}>
+                                        <Box sx={{ 
+                                            display: 'flex', 
+                                            justifyContent: 'space-between',
+                                            mb: 0.5
+                                        }}>
+                                            <Typography variant="body2" fontWeight="medium">
+                                                Belegung: {disk.Use}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                {disk.Used} / {disk.Size}
+                                            </Typography>
+                                        </Box>
+                                        <LinearProgress
+                                            variant="determinate"
+                                            value={parseInt(disk.Use)}
+                                            sx={{
+                                                height: 15,
+                                                borderRadius: 2,
+                                                '& .MuiLinearProgress-bar': {
+                                                    backgroundColor: (theme) => {
+                                                        const usedPercent = parseInt(disk.Use);
+                                                        if (usedPercent < 70) return theme.palette.success.main;
+                                                        if (usedPercent < 90) return theme.palette.warning.main;
+                                                        return theme.palette.error.main;
+                                                    },
+                                                },
+                                                backgroundColor: 'rgba(0, 0, 0, 0.09)'
+                                            }}
+                                        />
+                                        <Box sx={{ 
+                                            display: 'flex', 
+                                            justifyContent: 'space-between',
+                                            mt: 1, 
+                                            color: 'text.secondary',
+                                            fontSize: '0.8rem'
+                                        }}>
+                                            <Typography variant="caption">
+                                                0%
+                                            </Typography>
+                                            <Typography variant="caption">
+                                                Belegt
+                                            </Typography>
+                                            <Typography variant="caption">
+                                                100%
+                                            </Typography>
+                                        </Box>
                                     </Box>
-                                    <Typography variant="body2" sx={{ mt: 1 }}>
-                                        Verfügbar: {disk.Avail} ({disk.Size} total, {disk.Used} belegt)
-                                    </Typography>
+                                    
+                                    <Box sx={{ mt: 2 }}>
+                                        <Typography variant="body2" color="text.secondary" sx={{ 
+                                            display: 'flex', 
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            borderTop: '1px solid',
+                                            borderColor: 'divider',
+                                            pt: 1
+                                        }}>
+                                            <span>Verfügbar:</span>
+                                            <span style={{ fontWeight: 'bold' }}>{disk.Avail}</span>
+                                        </Typography>
+                                    </Box>
                                 </Box>
                             </Grid>
                         ))}
@@ -201,4 +155,5 @@ export const DiskInfo = () => {
         </Box>
     );
 };
+
 export default DiskInfo;
