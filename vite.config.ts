@@ -1,9 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { BACKEND_HOST, BACKEND_PORT } from './src/config';
 
-const BACKEND_PORT = 80; // Port des Backends
-export const BACKEND_HOST = 'kvmdash'; // Hostname/IP-Adresse des Backends
 
 // Backend-URL
 export const API_BASE_URL = `https://${BACKEND_HOST}:${BACKEND_PORT}`;
