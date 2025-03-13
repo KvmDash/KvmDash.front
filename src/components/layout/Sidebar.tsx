@@ -9,7 +9,7 @@ import Drawer from '@mui/material/Drawer';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import HomeIcon from '@mui/icons-material/Home';
-import SettingsIcon from '@mui/icons-material/Settings';
+//import SettingsIcon from '@mui/icons-material/Settings';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
 import ComputerIcon from '@mui/icons-material/Computer';
@@ -187,6 +187,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                     </ListItemButton>
                 </ListItem>
 
+            {/* 
                 <ListItem key="settings" disablePadding>
                     <ListItemButton component={Link} to="/settings" sx={{ justifyContent: open ? 'initial' : 'center' }}>
                         <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
@@ -195,6 +196,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         {open && <ListItemText primary="Settings" />}
                     </ListItemButton>
                 </ListItem>
+            */}
 
 
             </List>
