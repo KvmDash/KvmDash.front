@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 // mui
-import { List, Box, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, Divider, Toolbar, Collapse } from '@mui/material';
+import { List, Box, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, Divider, Toolbar, Collapse, Tooltip } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 
 // MUI Icons
@@ -95,6 +95,29 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
         }
     };
 
+    /**
+     * Prüft, ob eine VM aktiv ist
+     * @param state - Status der VM als Nummer
+     * @returns boolean - true wenn VM aktiv ist, sonst false
+     */
+    const isVmActive = (state: number): boolean => {
+        return state !== 5; // VM ist aktiv wenn sie nicht heruntergefahren ist (state 5)
+    };
+
+    /**
+     * Behandelt den Klick auf eine VM
+     * @param vmName - Name der VM
+     * @param isActive - Ist die VM aktiv?
+     * @param event - Event-Objekt
+     */
+    const handleVmItemClick = (vmName: string, isActive: boolean, event: React.MouseEvent) => {
+        if (!isActive) {
+            event.preventDefault();
+            // Optional: Hier könnte man ein Toast/Snackbar anzeigen, das erklärt, dass inaktive VMs nicht verfügbar sind
+            console.log(`VM ${vmName} ist nicht verfügbar, da sie nicht aktiv ist.`);
+        }
+    };
+
     return (
         <Drawer
             variant="permanent"
@@ -158,20 +181,30 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                                 <ListItem>
                                     <ListItemText primary={error} sx={{ color: 'error.main' }} />
                                 </ListItem>
-                            ) : vms.map((vm) => (
-                                <ListItem key={vm.name} disablePadding>
-                                    <ListItemButton
-                                        component={Link}
-                                        to={`/vm/${vm.name}`}
-                                        sx={{ pl: 4 }}
-                                    >
-                                        <ListItemIcon>
-                                            <ComputerIcon sx={{ color: getVmStatusColor(vm.state) }} />
-                                        </ListItemIcon>
-                                        <ListItemText primary={vm.name} />
-                                    </ListItemButton>
-                                </ListItem>
-                            ))}
+                            ) : vms.map((vm) => {
+                                const active = isVmActive(vm.state);
+                                return (
+                                    <ListItem key={vm.name} disablePadding>
+                                        <Tooltip title={!active ? "VM ist nicht aktiv" : ""} placement="right">
+                                            <ListItemButton
+                                                component={Link}
+                                                to={active ? `/vm/${vm.name}` : '#'}
+                                                onClick={(e) => handleVmItemClick(vm.name, active, e)}
+                                                sx={{ 
+                                                    pl: 4, 
+                                                    opacity: active ? 1 : 0.6,
+                                                    pointerEvents: active ? 'auto' : 'auto' // Wir behalten pointer-events bei, um den Tooltip zu zeigen
+                                                }}
+                                            >
+                                                <ListItemIcon>
+                                                    <ComputerIcon sx={{ color: getVmStatusColor(vm.state) }} />
+                                                </ListItemIcon>
+                                                <ListItemText primary={vm.name} />
+                                            </ListItemButton>
+                                        </Tooltip>
+                                    </ListItem>
+                                );
+                            })}
                         </List>
                     </Collapse>
                 )}
