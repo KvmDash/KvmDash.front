@@ -5,11 +5,16 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 i18n
   .use(Backend)
-  .use(LanguageDetector)
+  .use(LanguageDetector)  // Erkennt Browser-Sprache automatisch
   .use(initReactI18next)
   .init({
-    fallbackLng: 'de',
+    fallbackLng: 'en',
     supportedLngs: ['de', 'en'],
+    detection: {
+      order: ['localStorage', 'navigator', 'htmlTag'],
+      caches: ['localStorage'],  // Speichert Sprachauswahl
+      lookupLocalStorage: 'i18nextLng',
+    },
     debug: process.env.NODE_ENV === 'development',
     interpolation: {
       escapeValue: false,
