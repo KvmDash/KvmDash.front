@@ -111,5 +111,33 @@
         "ramUsage": "RAM Auslastung",
         "totalRam": "Gesamt RAM"
       }
+    },
+    "iso": {
+      "uploadTitle": "Boot Image hochladen",
+      "urlLabel": "Boot Image URL",
+      "urlHelper": "Bitte geben Sie eine gültige ISO-URL ein",
+      "startingDownload": "Download wird gestartet...",
+      "downloadStarted": "ISO-Download gestartet",
+      "downloadInProgress": "Download läuft...",
+      "downloadComplete": "Download abgeschlossen",
+      "downloadFailed": "Download fehlgeschlagen",
+      "statusCheckFailed": "Status-Prüfung fehlgeschlagen:",
+      "statusCheckError": "Fehler beim Prüfen des Download-Status",
+      "loadError": "Fehler beim Laden der ISO-Images:",
+      "formError": "Formular-Übermittlungsfehler:",
+      "requestError": "Fehler beim Senden der Anfrage",
+      "uploading": "Lädt...",
+      "uploadButton": "ISO-Image hochladen",
+      "availableImages": "Verfügbare Boot Images",
+      "name": "Name",
+      "size": "Größe",
+      "path": "Pfad",
+      "actions": "Aktionen",
+      "noImages": "Noch keine Boot Images verfügbar",
+      "deleteTitle": "ISO-Image löschen",
+      "deleteConfirm": "Möchten Sie wirklich das ISO-Image \"{{name}}\" löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "deleteSuccess": "ISO-Image erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen des ISO-Images",
+      "deleteFailed": "Löschen fehlgeschlagen:"
     }
   }

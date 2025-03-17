@@ -1,4 +1,5 @@
 import { FC, ReactElement, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Box,
     Typography,
@@ -28,6 +29,7 @@ import { uploadIso, getIsoStatus, getIsoImages, deleteIso } from '@services/qemu
 import { IsoFile } from '@interfaces/qemu.types';
 
 const IsoImages: FC = (): ReactElement => {
+    const { t } = useTranslation();
     const [isoUrl, setIsoUrl] = useState('');
     const [error, setError] = useState('');
     const [isUploading, setIsUploading] = useState(false);
@@ -49,15 +51,15 @@ const IsoImages: FC = (): ReactElement => {
                 try {
                     const response = await getIsoStatus();
                     if (response.status === 'success' && response.data.length > 0) {
-                        setUploadStatus(response.data[0].message || 'Download läuft...');
+                        setUploadStatus(response.data[0].message || t('iso.downloadInProgress'));
                     } else {
                         setDownloadProgress(false);
                         setIsUploading(false);
-                        setUploadStatus('Download abgeschlossen');
+                        setUploadStatus(t('iso.downloadComplete'));
                     }
                 } catch (error) {
-                    console.error('Status check failed:', error);
-                    setError('Fehler beim Prüfen des Download-Status');
+                    console.error(t('iso.statusCheckFailed'), error);
+                    setError(t('iso.statusCheckError'));
                 }
             }, 1000);
         }
@@ -67,7 +69,7 @@ const IsoImages: FC = (): ReactElement => {
                 clearInterval(intervalId);
             }
         };
-    }, [downloadProgress]);
+    }, [downloadProgress, t]);
 
 
     // Polling für ISO-Liste alle 15 Sekunden
@@ -77,7 +79,7 @@ const IsoImages: FC = (): ReactElement => {
                 const images = await getIsoImages();
                 setIsoFiles(images);
             } catch (error) {
-                console.error('Failed to load ISO images:', error);
+                console.error(t('iso.loadError'), error);
             }
         };
 
@@ -89,7 +91,7 @@ const IsoImages: FC = (): ReactElement => {
 
         // Cleanup beim Unmount
         return () => clearInterval(intervalId);
-    }, []);
+    }, [t]);
 
     // Hilfsfunktion für Dateigrößen
     const formatFileSize = (bytes: number): string => {
@@ -122,10 +124,10 @@ const IsoImages: FC = (): ReactElement => {
             setIsoFiles(images);
 
             // Zeige Erfolgs-Nachricht
-            setUploadStatus('ISO-Image erfolgreich gelöscht');
+            setUploadStatus(t('iso.deleteSuccess'));
         } catch (error) {
-            console.error('Delete failed:', error);
-            setError('Fehler beim Löschen des ISO-Images');
+            console.error(t('iso.deleteFailed'), error);
+            setError(t('iso.deleteError'));
         } finally {
             setIsLoading(false);
             setDeleteDialog({ open: false, iso: null });
@@ -140,19 +142,19 @@ const IsoImages: FC = (): ReactElement => {
         try {
             setIsUploading(true);
             setDownloadProgress(false);
-            setUploadStatus('Download wird gestartet...');
+            setUploadStatus(t('iso.startingDownload'));
 
             const response = await uploadIso(isoUrl);
 
             if (response.status === 'success') {
-                setUploadStatus('ISO-Download gestartet');
+                setUploadStatus(t('iso.downloadStarted'));
                 setDownloadProgress(true);
             } else {
-                throw new Error(response.message || 'Download fehlgeschlagen');
+                throw new Error(response.message || t('iso.downloadFailed'));
             }
         } catch (err) {
-            console.error('Form submission error:', err);
-            setError(err instanceof Error ? err.message : 'Fehler beim Senden der Anfrage');
+            console.error(t('iso.formError'), err);
+            setError(err instanceof Error ? err.message : t('iso.requestError'));
             setDownloadProgress(false);
             setIsUploading(false);
         }
@@ -161,7 +163,7 @@ const IsoImages: FC = (): ReactElement => {
     return (
         <Box sx={{ flexGrow: 1, padding: 4, display: 'grid', gap: 4 }}>
             <Card>
-                <CardHeader title="Boot Image hochladen" />
+                <CardHeader title={t('iso.uploadTitle')} />
                 <CardContent>
                     <form onSubmit={handleSubmit}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -169,9 +171,9 @@ const IsoImages: FC = (): ReactElement => {
                                 value={isoUrl}
                                 onChange={(e) => setIsoUrl(e.target.value)}
                                 placeholder="https://example.com/image.iso"
-                                label="Boot Image URL"
+                                label={t('iso.urlLabel')}
                                 error={!!error}
-                                helperText={error || 'Bitte geben Sie eine gültige ISO-URL ein'}
+                                helperText={error || t('iso.urlHelper')}
                                 fullWidth
                                 disabled={isUploading || downloadProgress}
                             />
@@ -191,7 +193,7 @@ const IsoImages: FC = (): ReactElement => {
                                 variant="contained"
                                 disabled={isUploading || downloadProgress}
                             >
-                                {isUploading ? 'Lädt...' : 'ISO-Image hochladen'}
+                                {isUploading ? t('iso.uploading') : t('iso.uploadButton')}
                             </Button>
                         </Box>
                     </form>
@@ -199,7 +201,7 @@ const IsoImages: FC = (): ReactElement => {
             </Card>
 
             <Card>
-                <CardHeader title="Verfügbare Boot Images" />
+                <CardHeader title={t('iso.availableImages')} />
                 <CardContent>
                     {isLoading ? (
                         <LinearProgress />
@@ -208,10 +210,10 @@ const IsoImages: FC = (): ReactElement => {
                             <Table size="small">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Name</TableCell>
-                                        <TableCell>Größe</TableCell>
-                                        <TableCell>Pfad</TableCell>
-                                        <TableCell align="right">Aktionen</TableCell>
+                                        <TableCell>{t('iso.name')}</TableCell>
+                                        <TableCell>{t('iso.size')}</TableCell>
+                                        <TableCell>{t('iso.path')}</TableCell>
+                                        <TableCell align="right">{t('iso.actions')}</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -222,7 +224,7 @@ const IsoImages: FC = (): ReactElement => {
                                             <TableCell>{iso.path}</TableCell>
                                             <TableCell align="right">
                                                 <IconButton
-                                                    aria-label="delete"
+                                                    aria-label={t('common.delete')}
                                                     size="small"
                                                     onClick={() => {
                                                         console.log('Delete clicked for:', iso.name);
@@ -245,7 +247,7 @@ const IsoImages: FC = (): ReactElement => {
                         </TableContainer>
                     ) : (
                         <Typography variant="body1">
-                            Noch keine Boot Images verfügbar
+                            {t('iso.noImages')}
                         </Typography>
                     )}
                 </CardContent>
@@ -254,23 +256,22 @@ const IsoImages: FC = (): ReactElement => {
                 open={deleteDialog.open}
                 onClose={handleDeleteCancel}
             >
-                <DialogTitle>ISO-Image löschen</DialogTitle>
+                <DialogTitle>{t('iso.deleteTitle')}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Möchten Sie wirklich das ISO-Image "{deleteDialog.iso?.name}" löschen?
-                        Diese Aktion kann nicht rückgängig gemacht werden.
+                        {t('iso.deleteConfirm', { name: deleteDialog.iso?.name })}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDeleteCancel}>
-                        Abbrechen
+                        {t('common.cancel')}
                     </Button>
                     <Button
                         onClick={handleDeleteConfirm}
                         color="error"
                         variant="contained"
                     >
-                        Löschen
+                        {t('common.delete')}
                     </Button>
                 </DialogActions>
             </Dialog>

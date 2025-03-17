@@ -111,5 +111,33 @@
         "ramUsage": "RAM Usage",
         "totalRam": "Total RAM"
       }
+    },
+    "iso": {
+      "uploadTitle": "Upload Boot Image",
+      "urlLabel": "Boot Image URL",
+      "urlHelper": "Please enter a valid ISO URL",
+      "startingDownload": "Starting download...",
+      "downloadStarted": "ISO download started",
+      "downloadInProgress": "Download in progress...",
+      "downloadComplete": "Download complete",
+      "downloadFailed": "Download failed",
+      "statusCheckFailed": "Status check failed:",
+      "statusCheckError": "Error checking download status",
+      "loadError": "Failed to load ISO images:",
+      "formError": "Form submission error:",
+      "requestError": "Error sending request",
+      "uploading": "Uploading...",
+      "uploadButton": "Upload ISO Image",
+      "availableImages": "Available Boot Images",
+      "name": "Name",
+      "size": "Size",
+      "path": "Path",
+      "actions": "Actions",
+      "noImages": "No boot images available yet",
+      "deleteTitle": "Delete ISO Image",
+      "deleteConfirm": "Do you really want to delete the ISO image \"{{name}}\"? This action cannot be undone.",
+      "deleteSuccess": "ISO image successfully deleted",
+      "deleteError": "Error deleting ISO image",
+      "deleteFailed": "Deletion failed:"
     }
   }
