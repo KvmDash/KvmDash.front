@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -9,7 +10,7 @@ import Drawer from '@mui/material/Drawer';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import HomeIcon from '@mui/icons-material/Home';
-//import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsIcon from '@mui/icons-material/Settings';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
 import ComputerIcon from '@mui/icons-material/Computer';
@@ -39,6 +40,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
+    const { t } = useTranslation(); // Translation Hook
     const [openVm, setOpenVm] = useState(false);
     const [vms, setVms] = useState<VMResponse[]>([]);
     const [loading, setLoading] = useState(true);
@@ -51,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                 const vmList = await getVirtualMachines();
                 setVms(vmList);
             } catch (err) {
-                setError('Failed to load VMs');
+                setError(t('common.error'));
                 console.error(err);
             } finally {
                 setLoading(false);
@@ -62,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
         // Aktualisierung alle 5 Sekunden
         const interval = setInterval(fetchVMs, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [t]);
 
     const handleLogout = () => {
         TokenStorage.removeToken();
@@ -156,7 +158,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
                             <HomeIcon />
                         </ListItemIcon>
-                        {open && <ListItemText primary="Home" />}
+                        {open && <ListItemText primary={t('sidebar.home')} />}
                     </ListItemButton>
                 </ListItem>
 
@@ -165,7 +167,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
                             <StorageIcon />
                         </ListItemIcon>
-                        {open && <ListItemText primary="Virtual Machines" />}
+                        {open && <ListItemText primary={t('sidebar.virtualMachines')} />}
                         {open ? (openVm ? <ExpandLess /> : <ExpandMore />) : null}
                     </ListItemButton>
                 </ListItem>
@@ -175,7 +177,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         <List component="div" disablePadding>
                             {loading ? (
                                 <ListItem>
-                                    <ListItemText primary="Loading..." />
+                                    <ListItemText primary={t('common.loading')} />
                                 </ListItem>
                             ) : error ? (
                                 <ListItem>
@@ -185,7 +187,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                                 const active = isVmActive(vm.state);
                                 return (
                                     <ListItem key={vm.name} disablePadding>
-                                        <Tooltip title={!active ? "VM ist nicht aktiv" : ""} placement="right">
+                                        <Tooltip title={!active ? t('sidebar.vmInactive', 'VM ist nicht aktiv') : ""} placement="right">
                                             <ListItemButton
                                                 component={Link}
                                                 to={active ? `/vm/${vm.name}` : '#'}
@@ -216,22 +218,18 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
                             <AlbumIcon />
                         </ListItemIcon>
-                        {open && <ListItemText primary="CD-Boot Images" />}
+                        {open && <ListItemText primary={t('sidebar.isoImages')} />}
                     </ListItemButton>
                 </ListItem>
 
-            {/* 
                 <ListItem key="settings" disablePadding>
                     <ListItemButton component={Link} to="/settings" sx={{ justifyContent: open ? 'initial' : 'center' }}>
                         <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
                             <SettingsIcon />
                         </ListItemIcon>
-                        {open && <ListItemText primary="Settings" />}
+                        {open && <ListItemText primary={t('sidebar.settings')} />}
                     </ListItemButton>
                 </ListItem>
-            */}
-
-
             </List>
 
             <List sx={{ marginTop: 'auto' }}>
@@ -246,7 +244,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
                             <LogoutIcon sx={{ color: 'error.main' }} />
                         </ListItemIcon>
-                        {open && <ListItemText primary="Logout" />}
+                        {open && <ListItemText primary={t('sidebar.logout')} />}
                     </ListItemButton>
                 </ListItem>
             </List>

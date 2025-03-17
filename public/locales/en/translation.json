@@ -1,0 +1,143 @@
+{
+    "common": {
+      "loading": "Loading...",
+      "error": "Error",
+      "logout": "Logout",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "dashboard": {
+      "title": "KVM Dashboard",
+      "vms": "Virtual Machines",
+      "host": "Host System"
+    },
+    "sidebar": {
+        "home": "Home",
+        "virtualMachines": "Virtual Machines",
+        "isoImages": "CD Boot Images",
+        "settings": "Settings",
+        "logout": "Logout",
+        "vmInactive": "VM is not active"
+    },
+    "auth": {
+      "login": "Login",
+      "email": "Email",
+      "password": "Password",
+      "signIn": "Sign In",
+      "loginFailed": "Login failed"
+    },
+    "host": {
+      "unknownError": "Unknown error",
+      "memInfoLoadError": "Error loading memory information:",
+      "cpuInfoLoadError": "Error loading CPU information:",
+      "diskInfoLoadError": "Error loading disk information:",
+      "memory": {
+        "information": "Memory Information",
+        "distribution": "Memory Distribution",
+        "usage": "Memory Usage",
+        "used": "Used",
+        "available": "Available",
+        "total": "Total",
+        "memory": "Memory",
+        "totalMemory": "Total Memory"
+      },
+      "cpu": {
+        "utilization": "CPU Utilization",
+        "current": "Current Usage",
+        "history": "History",
+        "usage": "CPU Usage",
+        "usagePercent": "Usage (%)",
+        "time": "Time",
+        "total": "Total",
+        "core": "Core"
+      },
+      "disk": {
+        "information": "Disk Information",
+        "usage": "Usage",
+        "used": "Used",
+        "available": "Available"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "language": {
+        "title": "Language Settings",
+        "select": "Choose your preferred language",
+        "german": "German",
+        "english": "English"
+      }
+    },
+    "vm": {
+      "inactive": "VM is not active",
+      "status": {
+        "active": "Active",
+        "stopped": "Stopped"
+      },
+      "error": {
+        "unknown": "An unknown error occurred",
+        "action": "Error performing VM action",
+        "delete": "Error deleting VM"
+      },
+      "delete": {
+        "title": "Delete VM",
+        "confirmText": "To delete VM {{vmName}}, please enter the VM name:",
+        "nameMismatch": "Name does not match",
+        "deleteVhd": "Also delete associated VHD files (*.cow)"
+      },
+      "create": {
+        "title": "Create new VM",
+        "name": "VM Name",
+        "ram": "RAM (MB)",
+        "cpus": "CPUs",
+        "diskSize": "Disk Size (GB)",
+        "network": "Network",
+        "isoImage": "ISO Image",
+        "osVariant": "Operating System",
+        "loadingNetworks": "Loading networks...",
+        "loadingIsos": "Loading ISO files...",
+        "loadingOs": "Loading operating systems...",
+        "submit": "Create VM",
+        "loadError": "Error loading data:",
+        "error": "Error creating VM:"
+      },
+      "metrics": {
+        "ram": "RAM",
+        "cpu": "CPU",
+        "updateFailed": "Metrics update failed:",
+        "cpuUsage": "CPU Usage",
+        "cpuTime": "CPU Time",
+        "used": "Used",
+        "cpuCount": "CPUs",
+        "ramUsage": "RAM Usage",
+        "totalRam": "Total RAM"
+      }
+    },
+    "iso": {
+      "uploadTitle": "Upload Boot Image",
+      "urlLabel": "Boot Image URL",
+      "urlHelper": "Please enter a valid ISO URL",
+      "startingDownload": "Starting download...",
+      "downloadStarted": "ISO download started",
+      "downloadInProgress": "Download in progress...",
+      "downloadComplete": "Download complete",
+      "downloadFailed": "Download failed",
+      "statusCheckFailed": "Status check failed:",
+      "statusCheckError": "Error checking download status",
+      "loadError": "Failed to load ISO images:",
+      "formError": "Form submission error:",
+      "requestError": "Error sending request",
+      "uploading": "Uploading...",
+      "uploadButton": "Upload ISO Image",
+      "availableImages": "Available Boot Images",
+      "name": "Name",
+      "size": "Size",
+      "path": "Path",
+      "actions": "Actions",
+      "noImages": "No boot images available yet",
+      "deleteTitle": "Delete ISO Image",
+      "deleteConfirm": "Do you really want to delete the ISO image \"{{name}}\"? This action cannot be undone.",
+      "deleteSuccess": "ISO image successfully deleted",
+      "deleteError": "Error deleting ISO image",
+      "deleteFailed": "Deletion failed:"
+    }
+  }

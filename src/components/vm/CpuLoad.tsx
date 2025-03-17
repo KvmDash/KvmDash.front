@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LinearProgress, Typography, Box } from '@mui/material';
 import type { VmStats } from '../../types/vm.types';
 
@@ -7,6 +8,7 @@ interface CpuLoadProps {
 }
 
 export default function CpuLoad({ stats }: CpuLoadProps) {
+    const { t } = useTranslation();
     const [lastCpuTime, setLastCpuTime] = useState(stats.stats.cpu_time);
     const [lastUpdate, setLastUpdate] = useState(Date.now());
     const [cpuUsage, setCpuUsage] = useState(0);
@@ -32,10 +34,10 @@ export default function CpuLoad({ stats }: CpuLoadProps) {
                 mb: 0.5
             }}>
                 <Typography variant="body2" fontWeight="medium">
-                    CPU Auslastung: {cpuUsage.toFixed(1)}%
+                    {t('vm.metrics.cpuUsage')}: {cpuUsage.toFixed(1)}%
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    CPU Zeit: {stats.stats.cpu_time.toFixed(2)}s
+                    {t('vm.metrics.cpuTime')}: {stats.stats.cpu_time.toFixed(2)}s
                 </Typography>
             </Box>
             
@@ -67,7 +69,7 @@ export default function CpuLoad({ stats }: CpuLoadProps) {
                     0%
                 </Typography>
                 <Typography variant="caption">
-                    Belegt
+                    {t('vm.metrics.used')}
                 </Typography>
                 <Typography variant="caption">
                     100%
@@ -83,7 +85,7 @@ export default function CpuLoad({ stats }: CpuLoadProps) {
                     borderColor: 'divider',
                     pt: 1
                 }}>
-                    <span>CPUs:</span>
+                    <span>{t('vm.metrics.cpuCount')}:</span>
                     <span style={{ fontWeight: 'bold' }}>{stats.cpuCount}</span>
                 </Typography>
             </Box>

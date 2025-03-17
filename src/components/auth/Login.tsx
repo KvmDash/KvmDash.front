@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { login } from '../../services/auth/auth'
 import { LoginResponse } from '../../types/auth'
@@ -17,6 +18,7 @@ import {
 import logo from '../../assets/kvmdash.svg'
 
 export const Login = () => {
+    const { t } = useTranslation()
     const navigate = useNavigate()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -32,11 +34,11 @@ export const Login = () => {
                 TokenStorage.setToken(response.token);
                 navigate('/')
             } else {
-                setError('Login fehlgeschlagen')
+                setError(t('auth.loginFailed'))
             }
         } catch (error) {
             console.error('Login failed:', error)
-            setError('Login fehlgeschlagen')
+            setError(t('auth.loginFailed'))
         }
     }
 
@@ -66,7 +68,7 @@ export const Login = () => {
                         <Grid item xs={12} md={7}>
                             <Box sx={{ p: 2 }}>
                                 <Typography variant="h4" component="h1" align="center" sx={{ mb: 3 }}>
-                                    Login
+                                    {t('auth.login')}
                                 </Typography>
                                 
                                 {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -74,7 +76,7 @@ export const Login = () => {
                                 <form onSubmit={handleSubmit}>
                                     <Box sx={{ mb: 2 }}>
                                         <TextField
-                                            label="Email"
+                                            label={t('auth.email')}
                                             variant="outlined"
                                             type="email"
                                             value={email}
@@ -85,7 +87,7 @@ export const Login = () => {
                                     </Box>
                                     <Box sx={{ mb: 3 }}>
                                         <TextField
-                                            label="Passwort"
+                                            label={t('auth.password')}
                                             variant="outlined"
                                             type="password"
                                             value={password}
@@ -102,7 +104,7 @@ export const Login = () => {
                                             fullWidth
                                             size="large"
                                         >
-                                            Anmelden
+                                            {t('auth.signIn')}
                                         </Button>
                                     </Box>
                                 </form>

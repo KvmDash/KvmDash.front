@@ -1,5 +1,6 @@
 import { useState, useEffect, JSX } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import {
     Box, Card, CardContent, CardHeader, Typography,
@@ -23,6 +24,7 @@ import {
 } from '@services/virtualization';
 
 export default function VmContent(): JSX.Element {
+    const { t } = useTranslation();
     const [vms, setVms] = useState<VmStatusResponse>({});
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<string>('');
@@ -37,7 +39,7 @@ export default function VmContent(): JSX.Element {
                 const status = await getVirtualMachineStatus();
                 setVms(status);
             } catch (err: unknown) {
-                let errorMessage = 'Ein unbekannter Fehler ist aufgetreten';
+                let errorMessage = t('vm.error.unknown');
 
                 if (err instanceof Error) {
                     errorMessage = err.message;
@@ -57,7 +59,7 @@ export default function VmContent(): JSX.Element {
         fetchStatus();
         const interval = setInterval(fetchStatus, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [t]);
 
     const handleVmAction = async (action: 'start' | 'stop' | 'reboot', vmName: string): Promise<void> => {
         setLoading(vmName);
@@ -78,7 +80,7 @@ export default function VmContent(): JSX.Element {
             const status = await getVirtualMachineStatus();
             setVms(status);
         } catch (err) {
-            let errorMessage = 'Fehler bei der VM-Aktion';
+            let errorMessage = t('vm.error.action');
             if (err instanceof Error) {
                 errorMessage = err.message;
             }
@@ -111,7 +113,7 @@ export default function VmContent(): JSX.Element {
                 setConfirmationName('');
                 setDeleteVhd(false);
             } catch (err) {
-                let errorMessage = 'Fehler beim Löschen der VM';
+                let errorMessage = t('vm.error.delete');
                 if (err instanceof Error) {
                     errorMessage = err.message;
                 }
@@ -134,8 +136,8 @@ export default function VmContent(): JSX.Element {
         return state === '1' ? 'success' : 'error';
     };
 
-    const getStatusText = (state: string): "Aktiv" | "Gestoppt" => {
-        return state === '1' ? 'Aktiv' : 'Gestoppt';
+    const getStatusText = (state: string): string => {
+        return state === '1' ? t('vm.status.active') : t('vm.status.stopped');
     };
 
     const formatMemory = (memoryKB: string): string => {
@@ -177,7 +179,7 @@ export default function VmContent(): JSX.Element {
                                                 {vmName}
                                             </Link>
                                         ) : (
-                                            <Tooltip title="VM ist nicht aktiv" placement="top">
+                                            <Tooltip title={t('vm.inactive')} placement="top">
                                                 <Typography 
                                                     sx={{ 
                                                         opacity: 0.6,
@@ -261,10 +263,10 @@ export default function VmContent(): JSX.Element {
                 </Grid>
             )}
             <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-                <DialogTitle>VM löschen</DialogTitle>
+                <DialogTitle>{t('vm.delete.title')}</DialogTitle>
                 <DialogContent>
                     <Typography variant="body1" sx={{ mb: 2 }}>
-                        Um die VM "{vmToDelete}" zu löschen, geben Sie bitte den Namen der VM ein:
+                        {t('vm.delete.confirmText', { vmName: vmToDelete })}
                     </Typography>
                     <TextField
                         fullWidth
@@ -272,7 +274,7 @@ export default function VmContent(): JSX.Element {
                         onChange={(e) => setConfirmationName(e.target.value)}
                         error={confirmationName !== '' && confirmationName !== vmToDelete}
                         helperText={confirmationName !== '' && confirmationName !== vmToDelete ?
-                            'Name stimmt nicht überein' : ''}
+                            t('vm.delete.nameMismatch') : ''}
                     />
                     <FormControlLabel
                         control={
@@ -284,14 +286,14 @@ export default function VmContent(): JSX.Element {
                         }
                         label={
                             <Typography color="error">
-                                Auch die zugehörigen VHD-Dateien (*.cow) löschen
+                                {t('vm.delete.deleteVhd')}
                             </Typography>
                         }
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setDeleteDialogOpen(false)}>
-                        Abbrechen
+                        {t('common.cancel')}
                     </Button>
                     <Button
                         onClick={handleDeleteConfirm}
@@ -299,7 +301,7 @@ export default function VmContent(): JSX.Element {
                         color="error"
                         variant="contained"
                     >
-                        Löschen
+                        {t('common.delete')}
                     </Button>
                 </DialogActions>
             </Dialog>

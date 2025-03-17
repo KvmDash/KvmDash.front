@@ -1,0 +1,143 @@
+{
+    "common": {
+      "loading": "Laden...",
+      "error": "Fehler",
+      "logout": "Abmelden",
+      "cancel": "Abbrechen",
+      "delete": "Löschen"
+    },
+    "dashboard": {
+      "title": "KVM Dashboard",
+      "vms": "Virtuelle Maschinen",
+      "host": "Host System"
+    },
+   "sidebar": {
+      "home": "Startseite",
+      "virtualMachines": "VM´s",
+      "isoImages": "CD-Boot Images",
+      "settings": "Einstellungen",
+      "logout": "Abmelden",
+      "vmInactive": "VM ist nicht aktiv"
+    },
+    "auth": {
+      "login": "Anmeldung",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "signIn": "Anmelden",
+      "loginFailed": "Login fehlgeschlagen"
+    },
+    "host": {
+      "unknownError": "Unbekannter Fehler",
+      "memInfoLoadError": "Fehler beim Laden der Speicher-Informationen:",
+      "cpuInfoLoadError": "Fehler beim Laden der CPU-Informationen:",
+      "diskInfoLoadError": "Fehler beim Laden der Festplatten-Informationen:",
+      "memory": {
+        "information": "Speicherinformationen",
+        "distribution": "Speicherverteilung",
+        "usage": "Speichernutzung",
+        "used": "Verwendet",
+        "available": "Verfügbar",
+        "total": "Gesamt",
+        "memory": "Speicher",
+        "totalMemory": "Gesamtspeicher"
+      },
+      "cpu": {
+        "utilization": "CPU Auslastung",
+        "current": "Aktuelle Auslastung",
+        "history": "Verlauf",
+        "usage": "CPU Auslastung",
+        "usagePercent": "Auslastung (%)",
+        "time": "Zeit",
+        "total": "Total",
+        "core": "Kern"
+      },
+      "disk": {
+        "information": "Festplatteninformationen",
+        "usage": "Belegung",
+        "used": "Belegt",
+        "available": "Verfügbar"
+      }
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "language": {
+        "title": "Spracheinstellungen",
+        "select": "Wählen Sie Ihre bevorzugte Sprache",
+        "german": "Deutsch",
+        "english": "Englisch"
+      }
+    },
+    "vm": {
+      "inactive": "VM ist nicht aktiv",
+      "status": {
+        "active": "Aktiv",
+        "stopped": "Gestoppt"
+      },
+      "error": {
+        "unknown": "Ein unbekannter Fehler ist aufgetreten",
+        "action": "Fehler bei der VM-Aktion",
+        "delete": "Fehler beim Löschen der VM"
+      },
+      "delete": {
+        "title": "VM löschen",
+        "confirmText": "Um die VM {{vmName}} zu löschen, geben Sie bitte den Namen der VM ein:",
+        "nameMismatch": "Name stimmt nicht überein",
+        "deleteVhd": "Auch die zugehörigen VHD-Dateien (*.cow) löschen"
+      },
+      "create": {
+        "title": "Neue VM erstellen",
+        "name": "VM Name",
+        "ram": "RAM (MB)",
+        "cpus": "CPUs",
+        "diskSize": "Festplattengröße (GB)",
+        "network": "Netzwerk",
+        "isoImage": "ISO Image",
+        "osVariant": "Betriebssystem",
+        "loadingNetworks": "Lade Netzwerke...",
+        "loadingIsos": "Lade ISO-Dateien...",
+        "loadingOs": "Lade Betriebssysteme...",
+        "submit": "VM erstellen",
+        "loadError": "Fehler beim Laden der Daten:",
+        "error": "Fehler beim Erstellen der VM:"
+      },
+      "metrics": {
+        "ram": "RAM",
+        "cpu": "CPU",
+        "updateFailed": "Aktualisierung der Metriken fehlgeschlagen:",
+        "cpuUsage": "CPU Auslastung",
+        "cpuTime": "CPU Zeit",
+        "used": "Belegt",
+        "cpuCount": "CPUs",
+        "ramUsage": "RAM Auslastung",
+        "totalRam": "Gesamt RAM"
+      }
+    },
+    "iso": {
+      "uploadTitle": "Boot Image hochladen",
+      "urlLabel": "Boot Image URL",
+      "urlHelper": "Bitte geben Sie eine gültige ISO-URL ein",
+      "startingDownload": "Download wird gestartet...",
+      "downloadStarted": "ISO-Download gestartet",
+      "downloadInProgress": "Download läuft...",
+      "downloadComplete": "Download abgeschlossen",
+      "downloadFailed": "Download fehlgeschlagen",
+      "statusCheckFailed": "Status-Prüfung fehlgeschlagen:",
+      "statusCheckError": "Fehler beim Prüfen des Download-Status",
+      "loadError": "Fehler beim Laden der ISO-Images:",
+      "formError": "Formular-Übermittlungsfehler:",
+      "requestError": "Fehler beim Senden der Anfrage",
+      "uploading": "Lädt...",
+      "uploadButton": "ISO-Image hochladen",
+      "availableImages": "Verfügbare Boot Images",
+      "name": "Name",
+      "size": "Größe",
+      "path": "Pfad",
+      "actions": "Aktionen",
+      "noImages": "Noch keine Boot Images verfügbar",
+      "deleteTitle": "ISO-Image löschen",
+      "deleteConfirm": "Möchten Sie wirklich das ISO-Image \"{{name}}\" löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+      "deleteSuccess": "ISO-Image erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen des ISO-Images",
+      "deleteFailed": "Löschen fehlgeschlagen:"
+    }
+  }
