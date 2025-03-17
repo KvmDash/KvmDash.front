@@ -16,5 +16,12 @@
       "settings": "Einstellungen",
       "logout": "Abmelden",
       "vmInactive": "VM ist nicht aktiv"
+    },
+    "auth": {
+      "login": "Anmeldung",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "signIn": "Anmelden",
+      "loginFailed": "Login fehlgeschlagen"
     }
   }
