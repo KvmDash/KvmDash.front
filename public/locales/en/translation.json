@@ -23,5 +23,19 @@
       "password": "Password",
       "signIn": "Sign In",
       "loginFailed": "Login failed"
+    },
+    "host": {
+      "unknownError": "Unknown error",
+      "memInfoLoadError": "Error loading memory information:",
+      "memory": {
+        "information": "Memory Information",
+        "distribution": "Memory Distribution",
+        "usage": "Memory Usage",
+        "used": "Used",
+        "available": "Available",
+        "total": "Total",
+        "memory": "Memory",
+        "totalMemory": "Total Memory"
+      }
     }
   }

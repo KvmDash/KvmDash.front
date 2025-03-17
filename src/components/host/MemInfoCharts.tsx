@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, Box, Typography, LinearProgress, Alert, Tabs, Tab } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import { MemData } from '@interfaces/host.types';
@@ -6,6 +7,7 @@ import { getMemInfo } from '@services/host';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 export const MemInfo = () => {
+    const { t } = useTranslation();
     const [memData, setMemData] = useState<MemData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -18,8 +20,8 @@ export const MemInfo = () => {
                 setMemData(data);
                 setError(null);
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'Unbekannter Fehler');
-                console.error('Fehler beim Laden der Speicher-Informationen:', err);
+                setError(err instanceof Error ? err.message : t('host.unknownError'));
+                console.error(t('host.memInfoLoadError'), err);
             } finally {
                 setLoading(false);
             }
@@ -30,7 +32,7 @@ export const MemInfo = () => {
         // Aktualisierung alle 5 Sekunden
         const interval = setInterval(fetchMemInfo, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [t]);
 
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
         setActiveTab(newValue);
@@ -44,8 +46,8 @@ export const MemInfo = () => {
         const available = parseFloat(memData.available.replace('G', ''));
         
         return [
-            { name: 'Verwendet', value: used },
-            { name: 'Verfügbar', value: available }
+            { name: t('host.memory.used'), value: used },
+            { name: t('host.memory.available'), value: available }
         ];
     };
 
@@ -53,10 +55,10 @@ export const MemInfo = () => {
         if (!memData) return [];
         
         return [
-            { name: 'Speicher', 
-              Gesamt: parseFloat(memData.total.replace('G', '')), 
-              Verwendet: parseFloat(memData.used.replace('G', '')), 
-              Verfügbar: parseFloat(memData.available.replace('G', '')) }
+            { name: t('host.memory.memory'), 
+              [t('host.memory.total')]: parseFloat(memData.total.replace('G', '')), 
+              [t('host.memory.used')]: parseFloat(memData.used.replace('G', '')), 
+              [t('host.memory.available')]: parseFloat(memData.available.replace('G', '')) }
         ];
     };
 
@@ -108,11 +110,11 @@ export const MemInfo = () => {
         <Box sx={{ flexGrow: 1, p: 2 }}>
             <Card elevation={3} sx={{ borderRadius: 3, minHeight: 400 }}>
                 <CardHeader 
-                    title="Speicherinformationen"
+                    title={t('host.memory.information')}
                     action={
                         <Tabs value={activeTab} onChange={handleTabChange}>
-                            <Tab label="Speicherverteilung" />
-                            <Tab label="Speichernutzung" />
+                            <Tab label={t('host.memory.distribution')} />
+                            <Tab label={t('host.memory.usage')} />
                         </Tabs>
                     }
                 />
@@ -185,7 +187,6 @@ export const MemInfo = () => {
                                         <BarChart 
                                             data={getBarChartData()}
                                             style={{ backgroundColor: 'transparent' }}
-                                            // Die Prop "background" entfernen, da sie nicht unterstützt wird
                                         >
                                             <CartesianGrid strokeDasharray="3 3" stroke="#444" />
                                             <XAxis dataKey="name" />
@@ -195,9 +196,9 @@ export const MemInfo = () => {
                                                 cursor={{ fill: 'rgba(50, 50, 50, 0.3)' }} // Setzt die Farbe beim Hover
                                             />
                                             <Legend />
-                                            <Bar dataKey="Gesamt" fill="#8884d8" />
-                                            <Bar dataKey="Verwendet" fill="#ff4444" />
-                                            <Bar dataKey="Verfügbar" fill="#00c853" />
+                                            <Bar dataKey={t('host.memory.total')} fill="#8884d8" />
+                                            <Bar dataKey={t('host.memory.used')} fill="#ff4444" />
+                                            <Bar dataKey={t('host.memory.available')} fill="#00c853" />
                                         </BarChart>
                                     </ResponsiveContainer>
                                 </Box>
@@ -205,9 +206,9 @@ export const MemInfo = () => {
                         )}
                         <Grid size={{ xs: 12 }}>
                             <Typography variant="body1" sx={{ mt: 2, textAlign: 'center' }}>
-                                Gesamtspeicher: {memData?.total || 'N/A'} | 
-                                Verwendet: {memData?.used || 'N/A'} | 
-                                Verfügbar: {memData?.available || 'N/A'}
+                                {t('host.memory.totalMemory')}: {memData?.total || 'N/A'} | 
+                                {t('host.memory.used')}: {memData?.used || 'N/A'} | 
+                                {t('host.memory.available')}: {memData?.available || 'N/A'}
                             </Typography>
                         </Grid>
                     </Grid>

@@ -23,5 +23,19 @@
       "password": "Passwort",
       "signIn": "Anmelden",
       "loginFailed": "Login fehlgeschlagen"
+    },
+    "host": {
+      "unknownError": "Unbekannter Fehler",
+      "memInfoLoadError": "Fehler beim Laden der Speicher-Informationen:",
+      "memory": {
+        "information": "Speicherinformationen",
+        "distribution": "Speicherverteilung",
+        "usage": "Speichernutzung",
+        "used": "Verwendet",
+        "available": "Verfügbar",
+        "total": "Gesamt",
+        "memory": "Speicher",
+        "totalMemory": "Gesamtspeicher"
+      }
     }
   }
