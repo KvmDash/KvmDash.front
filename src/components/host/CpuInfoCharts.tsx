@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, Box, LinearProgress, Alert, Tabs, Tab } from "@mui/material";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 
@@ -49,6 +50,7 @@ interface TooltipProps {
 }
 
 export const CpuInfo = () => {
+    const { t } = useTranslation();
     const [cpuData, setCpuData] = useState<CpuData[]>([]);
     const [historicalData, setHistoricalData] = useState<HistoricalCpuData[]>([]);
     const [loading, setLoading] = useState(true);
@@ -79,8 +81,8 @@ export const CpuInfo = () => {
                 
                 setError(null);
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'Unbekannter Fehler');
-                console.error('Fehler beim Laden der CPU-Informationen:', err);
+                setError(err instanceof Error ? err.message : t('host.unknownError'));
+                console.error(t('host.cpuInfoLoadError'), err);
             } finally {
                 setLoading(false);
             }
@@ -91,7 +93,7 @@ export const CpuInfo = () => {
         // Aktualisierung alle 5 Sekunden
         const interval = setInterval(fetchCpuInfo, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [t]);
 
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
         setActiveTab(newValue);
@@ -99,7 +101,7 @@ export const CpuInfo = () => {
 
     // Daten für das Balkendiagramm aufbereiten
     const barChartData = cpuData.map(cpu => ({
-        name: cpu.cpu === 'cpu' ? 'Total' : `Core ${cpu.cpu.replace('cpu', '')}`,
+        name: cpu.cpu === 'cpu' ? t('host.cpu.total') : `${t('host.cpu.core')} ${cpu.cpu.replace('cpu', '')}`,
         usage: cpu.usage,
         color: getUsageColor(cpu.usage)
     }));
@@ -110,7 +112,7 @@ export const CpuInfo = () => {
             timestamp: new Date(data.timestamp).toLocaleTimeString() 
         };
         Object.keys(data.cores).forEach(core => {
-            const name = core === 'cpu' ? 'Total' : `Core ${core.replace('cpu', '')}`;
+            const name = core === 'cpu' ? t('host.cpu.total') : `${t('host.cpu.core')} ${core.replace('cpu', '')}`;
             result[name] = data.cores[core];
         });
         return result;
@@ -124,14 +126,14 @@ export const CpuInfo = () => {
 
     // Alle Core-Namen extrahieren
     const coreNames = cpuData
-        .map(cpu => cpu.cpu === 'cpu' ? 'Total' : `Core ${cpu.cpu.replace('cpu', '')}`)
+        .map(cpu => cpu.cpu === 'cpu' ? t('host.cpu.total') : `${t('host.cpu.core')} ${cpu.cpu.replace('cpu', '')}`)
         .sort((a, b) => {
-            if (a === 'Total') return -1;
-            if (b === 'Total') return 1;
+            if (a === t('host.cpu.total')) return -1;
+            if (b === t('host.cpu.total')) return 1;
             
             // Numerische Sortierung statt lexikographischer Sortierung
-            const numA = parseInt(a.replace('Core ', ''), 10);
-            const numB = parseInt(b.replace('Core ', ''), 10);
+            const numA = parseInt(a.replace(`${t('host.cpu.core')} `, ''), 10);
+            const numB = parseInt(b.replace(`${t('host.cpu.core')} `, ''), 10);
             
             return numA - numB;
         });
@@ -166,11 +168,11 @@ export const CpuInfo = () => {
         <Box sx={{ flexGrow: 1, p: 2 }}>
             <Card elevation={3} sx={{ borderRadius: 3, minHeight: 450 }}>
                 <CardHeader 
-                    title="CPU Auslastung" 
+                    title={t('host.cpu.utilization')}
                     action={
                         <Tabs value={activeTab} onChange={handleTabChange}>
-                            <Tab label="Aktuelle Auslastung" />
-                            <Tab label="Verlauf" />
+                            <Tab label={t('host.cpu.current')} />
+                            <Tab label={t('host.cpu.history')} />
                         </Tabs>
                     }
                 />
@@ -212,7 +214,7 @@ export const CpuInfo = () => {
                                             <Legend />
                                             <Bar 
                                                 dataKey="usage" 
-                                                name="CPU Auslastung" 
+                                                name={t('host.cpu.usage')} 
                                                 fill="#8884d8" 
                                                 background={{ fill: '#3f3f3f' }}
                                                 animationDuration={300}
@@ -246,8 +248,8 @@ export const CpuInfo = () => {
                                             style={{ backgroundColor: 'transparent' }}
                                         >
                                             <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                                            <XAxis dataKey="timestamp" label={{ value: 'Zeit', position: 'insideBottomRight', offset: -5 }} />
-                                            <YAxis domain={[0, 100]} tickCount={11} label={{ value: 'Auslastung (%)', angle: -90, position: 'insideLeft' }} />
+                                            <XAxis dataKey="timestamp" label={{ value: t('host.cpu.time'), position: 'insideBottomRight', offset: -5 }} />
+                                            <YAxis domain={[0, 100]} tickCount={11} label={{ value: t('host.cpu.usagePercent'), angle: -90, position: 'insideLeft' }} />
                                             <Tooltip 
                                                 content={<CustomTooltip />}
                                                 cursor={{ stroke: 'rgba(50, 50, 50, 0.3)', strokeWidth: 2 }}

@@ -27,6 +27,7 @@
     "host": {
       "unknownError": "Unknown error",
       "memInfoLoadError": "Error loading memory information:",
+      "cpuInfoLoadError": "Error loading CPU information:",
       "memory": {
         "information": "Memory Information",
         "distribution": "Memory Distribution",
@@ -36,6 +37,16 @@
         "total": "Total",
         "memory": "Memory",
         "totalMemory": "Total Memory"
+      },
+      "cpu": {
+        "utilization": "CPU Utilization",
+        "current": "Current Usage",
+        "history": "History",
+        "usage": "CPU Usage",
+        "usagePercent": "Usage (%)",
+        "time": "Time",
+        "total": "Total",
+        "core": "Core"
       }
     }
   }

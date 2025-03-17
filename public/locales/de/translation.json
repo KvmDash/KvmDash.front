@@ -27,6 +27,7 @@
     "host": {
       "unknownError": "Unbekannter Fehler",
       "memInfoLoadError": "Fehler beim Laden der Speicher-Informationen:",
+      "cpuInfoLoadError": "Fehler beim Laden der CPU-Informationen:",
       "memory": {
         "information": "Speicherinformationen",
         "distribution": "Speicherverteilung",
@@ -36,6 +37,16 @@
         "total": "Gesamt",
         "memory": "Speicher",
         "totalMemory": "Gesamtspeicher"
+      },
+      "cpu": {
+        "utilization": "CPU Auslastung",
+        "current": "Aktuelle Auslastung",
+        "history": "Verlauf",
+        "usage": "CPU Auslastung",
+        "usagePercent": "Auslastung (%)",
+        "time": "Zeit",
+        "total": "Total",
+        "core": "Kern"
       }
     }
   }
