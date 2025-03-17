@@ -11,9 +11,10 @@
     },
    "sidebar": {
       "home": "Startseite",
-      "virtualMachines": "Virtuelle Maschinen",
+      "virtualMachines": "VM´s",
       "isoImages": "CD-Boot Images",
       "settings": "Einstellungen",
-      "logout": "Abmelden"
+      "logout": "Abmelden",
+      "vmInactive": "VM ist nicht aktiv"
     }
   }

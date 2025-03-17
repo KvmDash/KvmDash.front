@@ -53,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                 const vmList = await getVirtualMachines();
                 setVms(vmList);
             } catch (err) {
-                setError('Failed to load VMs');
+                setError(t('common.error'));
                 console.error(err);
             } finally {
                 setLoading(false);
@@ -64,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
         // Aktualisierung alle 5 Sekunden
         const interval = setInterval(fetchVMs, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [t]);
 
     const handleLogout = () => {
         TokenStorage.removeToken();
@@ -167,7 +167,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
                             <StorageIcon />
                         </ListItemIcon>
-                        {open && <ListItemText primary="Virtual Machines" />}
+                        {open && <ListItemText primary={t('sidebar.virtualMachines')} />}
                         {open ? (openVm ? <ExpandLess /> : <ExpandMore />) : null}
                     </ListItemButton>
                 </ListItem>
@@ -177,7 +177,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         <List component="div" disablePadding>
                             {loading ? (
                                 <ListItem>
-                                    <ListItemText primary="Loading..." />
+                                    <ListItemText primary={t('common.loading')} />
                                 </ListItem>
                             ) : error ? (
                                 <ListItem>
@@ -187,7 +187,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                                 const active = isVmActive(vm.state);
                                 return (
                                     <ListItem key={vm.name} disablePadding>
-                                        <Tooltip title={!active ? "VM ist nicht aktiv" : ""} placement="right">
+                                        <Tooltip title={!active ? t('sidebar.vmInactive', 'VM ist nicht aktiv') : ""} placement="right">
                                             <ListItemButton
                                                 component={Link}
                                                 to={active ? `/vm/${vm.name}` : '#'}
@@ -218,7 +218,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
                             <AlbumIcon />
                         </ListItemIcon>
-                        {open && <ListItemText primary="CD-Boot Images" />}
+                        {open && <ListItemText primary={t('sidebar.isoImages')} />}
                     </ListItemButton>
                 </ListItem>
 
@@ -228,7 +228,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
                             <SettingsIcon />
                         </ListItemIcon>
-                        {open && <ListItemText primary="Settings" />}
+                        {open && <ListItemText primary={t('sidebar.settings')} />}
                     </ListItemButton>
                 </ListItem>
             */}
@@ -248,7 +248,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
                             <LogoutIcon sx={{ color: 'error.main' }} />
                         </ListItemIcon>
-                        {open && <ListItemText primary="Logout" />}
+                        {open && <ListItemText primary={t('sidebar.logout')} />}
                     </ListItemButton>
                 </ListItem>
             </List>
