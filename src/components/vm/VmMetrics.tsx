@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getVmDetails } from '../../services/virtualization';
 import type { VmStats } from '../../types/vm.types';
 import { Card, CardContent, CardHeader } from '@mui/material';
@@ -13,6 +14,7 @@ interface VmMetricsProps {
 }
 
 export default function VmMetrics({ vmName, initialStats }: VmMetricsProps) {
+    const { t } = useTranslation();
     const [metrics, setMetrics] = useState<VmStats>(initialStats);
 
     useEffect(() => {
@@ -21,21 +23,19 @@ export default function VmMetrics({ vmName, initialStats }: VmMetricsProps) {
                 const details = await getVmDetails(vmName);
                 setMetrics(details);
             } catch (err) {
-                console.error('Metrics update failed:', err);
+                console.error(t('vm.metrics.updateFailed'), err);
             }
         }, 2000);
 
         return () => clearInterval(interval);
-    }, [vmName]);
+    }, [vmName, t]);
 
     return (
         <Grid container spacing={2}>
-
-
             <Grid size={{ xs: 6 }}>
                 <Card elevation={3}>
                     <CardHeader
-                        title="RAM"
+                        title={t('vm.metrics.ram')}
                         avatar={<DisplaySettingsIcon color="primary" />}
                     />
                     <CardContent>
@@ -47,7 +47,7 @@ export default function VmMetrics({ vmName, initialStats }: VmMetricsProps) {
             <Grid size={{ xs: 6 }}>
                 <Card elevation={3}>
                     <CardHeader
-                        title="CPU"
+                        title={t('vm.metrics.cpu')}
                         avatar={<DisplaySettingsIcon color="primary" />}
                     />
                     <CardContent>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { LinearProgress, Typography, Box } from '@mui/material';
 import type { VmStats } from '../../types/vm.types';
 
@@ -6,6 +7,7 @@ interface RamLoadProps {
 }
 
 export default function RamLoad({ stats }: RamLoadProps) {
+    const { t } = useTranslation();
     // Umrechnung in GB für bessere Lesbarkeit
     const totalRamGB = (stats.stats.max_memory / 1048576).toFixed(2);
     const usedRamGB = (stats.stats.memory_usage / 1048576).toFixed(2);
@@ -21,7 +23,7 @@ export default function RamLoad({ stats }: RamLoadProps) {
                 mb: 0.5
             }}>
                 <Typography variant="body2" fontWeight="medium">
-                    RAM Auslastung: {ramUsagePercent.toFixed(1)}%
+                    {t('vm.metrics.ramUsage')}: {ramUsagePercent.toFixed(1)}%
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                     {usedRamGB} / {totalRamGB} GB
@@ -56,7 +58,7 @@ export default function RamLoad({ stats }: RamLoadProps) {
                     0%
                 </Typography>
                 <Typography variant="caption">
-                    Belegt
+                    {t('vm.metrics.used')}
                 </Typography>
                 <Typography variant="caption">
                     100%
@@ -72,7 +74,7 @@ export default function RamLoad({ stats }: RamLoadProps) {
                     borderColor: 'divider',
                     pt: 1
                 }}>
-                    <span>Gesamt RAM:</span>
+                    <span>{t('vm.metrics.totalRam')}:</span>
                     <span style={{ fontWeight: 'bold' }}>{totalRamGB} GB</span>
                 </Typography>
             </Box>

@@ -99,6 +99,17 @@
         "submit": "Create VM",
         "loadError": "Error loading data:",
         "error": "Error creating VM:"
+      },
+      "metrics": {
+        "ram": "RAM",
+        "cpu": "CPU",
+        "updateFailed": "Metrics update failed:",
+        "cpuUsage": "CPU Usage",
+        "cpuTime": "CPU Time",
+        "used": "Used",
+        "cpuCount": "CPUs",
+        "ramUsage": "RAM Usage",
+        "totalRam": "Total RAM"
       }
     }
   }

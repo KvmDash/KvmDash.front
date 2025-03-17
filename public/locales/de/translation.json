@@ -99,6 +99,17 @@
         "submit": "VM erstellen",
         "loadError": "Fehler beim Laden der Daten:",
         "error": "Fehler beim Erstellen der VM:"
+      },
+      "metrics": {
+        "ram": "RAM",
+        "cpu": "CPU",
+        "updateFailed": "Aktualisierung der Metriken fehlgeschlagen:",
+        "cpuUsage": "CPU Auslastung",
+        "cpuTime": "CPU Zeit",
+        "used": "Belegt",
+        "cpuCount": "CPUs",
+        "ramUsage": "RAM Auslastung",
+        "totalRam": "Gesamt RAM"
       }
     }
   }
