@@ -55,5 +55,14 @@
         "used": "Belegt",
         "available": "Verfügbar"
       }
+    },
+    "settings": {
+      "title": "Einstellungen",
+      "language": {
+        "title": "Spracheinstellungen",
+        "select": "Wählen Sie Ihre bevorzugte Sprache",
+        "german": "Deutsch",
+        "english": "Englisch"
+      }
     }
   }

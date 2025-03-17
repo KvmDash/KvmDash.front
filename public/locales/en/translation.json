@@ -55,5 +55,14 @@
         "used": "Used",
         "available": "Available"
       }
+    },
+    "settings": {
+      "title": "Settings",
+      "language": {
+        "title": "Language Settings",
+        "select": "Choose your preferred language",
+        "german": "German",
+        "english": "English"
+      }
     }
   }
