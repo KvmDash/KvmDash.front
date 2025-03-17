@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Card,
     CardContent,
@@ -17,8 +18,6 @@ import { VmFormData } from '@interfaces/vm.types';
 import { NetworkOption, IsoFile } from '@interfaces/qemu.types';
 import { getNetworks, getOsVariants, getIsoImages, DEFAULT_OS_VARIANT } from '@/services/qemu';
 import { createVirtualMachine } from '@/services/virtualization';
-
-
 
 // initialFormData
 const initialFormData: VmFormData = {
@@ -39,6 +38,7 @@ interface CreateVmFormProps {
 
 
 export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState<VmFormData>(initialFormData);
     const [networkOptions, setNetworkOptions] = useState<NetworkOption[]>([]);
     const [osVariants, setOsVariants] = useState<string[]>([]);
@@ -65,14 +65,14 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                     iso_image: isos[0]?.path || '' // Erste ISO wenn verfügbar
                 }));
             } catch (error) {
-                console.error('Fehler beim Laden der Daten:', error);
+                console.error(t('vm.create.loadError'), error);
             } finally {
                 setIsLoading(false);
             }
         };
 
         loadData();
-    }, []);
+    }, [t]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         const { name, value } = e.target;
@@ -90,14 +90,14 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                 onSubmit(formData);
             }
         } catch (error) {
-            console.error('Fehler beim Erstellen der VM:', error);
+            console.error(t('vm.create.error'), error);
         }
     };
 
     return (
         <Card elevation={3}>
             <CardHeader
-                title="Neue VM erstellen"
+                title={t('vm.create.title')}
                 avatar={<ComputerIcon color="primary" />}
                 titleTypographyProps={{ variant: 'h6' }}
             />
@@ -107,7 +107,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                         <Grid size={{ xs: 12 }}>
                             <TextField
                                 fullWidth
-                                label="VM Name"
+                                label={t('vm.create.name')}
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
@@ -117,7 +117,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                         <Grid size={{ xs: 12, md: 6 }}>
                             <TextField
                                 fullWidth
-                                label="RAM (MB)"
+                                label={t('vm.create.ram')}
                                 name="memory"
                                 type="number"
                                 value={formData.memory}
@@ -129,7 +129,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                         <Grid size={{ xs: 12, md: 6 }}>
                             <TextField
                                 fullWidth
-                                label="CPUs"
+                                label={t('vm.create.cpus')}
                                 name="vcpus"
                                 type="number"
                                 value={formData.vcpus}
@@ -141,7 +141,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                         <Grid size={{ xs: 12, md: 6 }}>
                             <TextField
                                 fullWidth
-                                label="Festplattengröße (GB)"
+                                label={t('vm.create.diskSize')}
                                 name="disk_size"
                                 type="number"
                                 value={formData.disk_size}
@@ -154,7 +154,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                             <TextField
                                 fullWidth
                                 select
-                                label="Netzwerk"
+                                label={t('vm.create.network')}
                                 name="network_bridge"
                                 value={formData.network_bridge}
                                 onChange={handleChange}
@@ -162,7 +162,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                 disabled={isLoading}
                             >
                                 {isLoading ? (
-                                    <MenuItem disabled>Lade Netzwerke...</MenuItem>
+                                    <MenuItem disabled>{t('vm.create.loadingNetworks')}</MenuItem>
                                 ) : (
                                     networkOptions.map((option) => (
                                         <MenuItem
@@ -180,7 +180,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                             <TextField
                                 fullWidth
                                 select
-                                label="ISO Image"
+                                label={t('vm.create.isoImage')}
                                 name="iso_image"
                                 value={formData.iso_image}
                                 onChange={handleChange}
@@ -202,7 +202,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                 }}
                             >
                                 {isLoading ? (
-                                    <MenuItem disabled>Lade ISO-Dateien...</MenuItem>
+                                    <MenuItem disabled>{t('vm.create.loadingIsos')}</MenuItem>
                                 ) : (
                                     isoFiles.map((iso) => (
                                         <MenuItem key={iso.path} value={iso.path}>
@@ -217,7 +217,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                 fullWidth
                                 options={osVariants}
                                 value={formData.os_variant}
-                                onChange={(_, newValue) => {  // Unterstriche für ungenutzte Parameter
+                                onChange={(_, newValue) => {
                                     setFormData(prev => ({
                                         ...prev,
                                         os_variant: newValue || ''
@@ -227,10 +227,10 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
-                                        label="Betriebssystem"
+                                        label={t('vm.create.osVariant')}
                                         required
                                         error={isLoading}
-                                        helperText={isLoading ? 'Lade Betriebssysteme...' : ''}
+                                        helperText={isLoading ? t('vm.create.loadingOs') : ''}
                                         InputProps={{
                                             ...params.InputProps,
                                             endAdornment: (
@@ -262,7 +262,7 @@ export const CreateForm: React.FC<CreateVmFormProps> = ({ onSubmit }) => {
                                 color="primary"
                                 fullWidth
                             >
-                                VM erstellen
+                                {t('vm.create.submit')}
                             </Button>
                         </Grid>
                     </Grid>

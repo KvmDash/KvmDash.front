@@ -80,9 +80,25 @@
       },
       "delete": {
         "title": "Delete VM",
-        "confirmText": "To delete VM \"{vmName}\", please enter the VM name:",
+        "confirmText": "To delete VM {{vmName}}, please enter the VM name:",
         "nameMismatch": "Name does not match",
         "deleteVhd": "Also delete associated VHD files (*.cow)"
+      },
+      "create": {
+        "title": "Create new VM",
+        "name": "VM Name",
+        "ram": "RAM (MB)",
+        "cpus": "CPUs",
+        "diskSize": "Disk Size (GB)",
+        "network": "Network",
+        "isoImage": "ISO Image",
+        "osVariant": "Operating System",
+        "loadingNetworks": "Loading networks...",
+        "loadingIsos": "Loading ISO files...",
+        "loadingOs": "Loading operating systems...",
+        "submit": "Create VM",
+        "loadError": "Error loading data:",
+        "error": "Error creating VM:"
       }
     }
   }
