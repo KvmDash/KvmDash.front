@@ -1,0 +1,19 @@
+{
+    "common": {
+      "loading": "Laden...",
+      "error": "Fehler",
+      "logout": "Abmelden"
+    },
+    "dashboard": {
+      "title": "KVM Dashboard",
+      "vms": "Virtuelle Maschinen",
+      "host": "Host System"
+    },
+   "sidebar": {
+      "home": "Startseite",
+      "virtualMachines": "Virtuelle Maschinen",
+      "isoImages": "CD-Boot Images",
+      "settings": "Einstellungen",
+      "logout": "Abmelden"
+    }
+  }

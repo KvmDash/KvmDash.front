@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -39,6 +40,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
+    const { t } = useTranslation(); // Translation Hook
     const [openVm, setOpenVm] = useState(false);
     const [vms, setVms] = useState<VMResponse[]>([]);
     const [loading, setLoading] = useState(true);
@@ -156,7 +158,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, toggleDrawer }) => {
                         <ListItemIcon sx={{ minWidth: open ? 48 : 0 }}>
                             <HomeIcon />
                         </ListItemIcon>
-                        {open && <ListItemText primary="Home" />}
+                        {open && <ListItemText primary={t('sidebar.home')} />}
                     </ListItemButton>
                 </ListItem>
 

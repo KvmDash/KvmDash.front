@@ -1,0 +1,19 @@
+{
+    "common": {
+      "loading": "Loading...",
+      "error": "Error",
+      "logout": "Logout"
+    },
+    "dashboard": {
+      "title": "KVM Dashboard",
+      "vms": "Virtual Machines",
+      "host": "Host System"
+    },
+    "sidebar": {
+        "home": "Home",
+        "virtualMachines": "Virtual Machines",
+        "isoImages": "CD Boot Images",
+        "settings": "Settings",
+        "logout": "Logout"
+    }
+  }
