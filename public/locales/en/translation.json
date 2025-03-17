@@ -28,6 +28,7 @@
       "unknownError": "Unknown error",
       "memInfoLoadError": "Error loading memory information:",
       "cpuInfoLoadError": "Error loading CPU information:",
+      "diskInfoLoadError": "Error loading disk information:",
       "memory": {
         "information": "Memory Information",
         "distribution": "Memory Distribution",
@@ -47,6 +48,12 @@
         "time": "Time",
         "total": "Total",
         "core": "Core"
+      },
+      "disk": {
+        "information": "Disk Information",
+        "usage": "Usage",
+        "used": "Used",
+        "available": "Available"
       }
     }
   }

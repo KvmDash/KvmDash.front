@@ -28,6 +28,7 @@
       "unknownError": "Unbekannter Fehler",
       "memInfoLoadError": "Fehler beim Laden der Speicher-Informationen:",
       "cpuInfoLoadError": "Fehler beim Laden der CPU-Informationen:",
+      "diskInfoLoadError": "Fehler beim Laden der Festplatten-Informationen:",
       "memory": {
         "information": "Speicherinformationen",
         "distribution": "Speicherverteilung",
@@ -47,6 +48,12 @@
         "time": "Zeit",
         "total": "Total",
         "core": "Kern"
+      },
+      "disk": {
+        "information": "Festplatteninformationen",
+        "usage": "Belegung",
+        "used": "Belegt",
+        "available": "Verfügbar"
       }
     }
   }
