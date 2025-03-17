@@ -2,7 +2,9 @@
     "common": {
       "loading": "Loading...",
       "error": "Error",
-      "logout": "Logout"
+      "logout": "Logout",
+      "cancel": "Cancel",
+      "delete": "Delete"
     },
     "dashboard": {
       "title": "KVM Dashboard",
@@ -63,6 +65,24 @@
         "select": "Choose your preferred language",
         "german": "German",
         "english": "English"
+      }
+    },
+    "vm": {
+      "inactive": "VM is not active",
+      "status": {
+        "active": "Active",
+        "stopped": "Stopped"
+      },
+      "error": {
+        "unknown": "An unknown error occurred",
+        "action": "Error performing VM action",
+        "delete": "Error deleting VM"
+      },
+      "delete": {
+        "title": "Delete VM",
+        "confirmText": "To delete VM \"{vmName}\", please enter the VM name:",
+        "nameMismatch": "Name does not match",
+        "deleteVhd": "Also delete associated VHD files (*.cow)"
       }
     }
   }
