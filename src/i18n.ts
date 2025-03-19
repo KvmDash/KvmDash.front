@@ -8,7 +8,7 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    fallbackLng: 'de',
+    fallbackLng: 'en',
     debug: process.env.NODE_ENV === 'development',
     detection: {
       order: ['localStorage', 'navigator'],
