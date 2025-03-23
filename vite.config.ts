@@ -1,11 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { BACKEND_HOST, BACKEND_PORT } from './src/config';
+import { API_BASE_URL } from './src/config';
 
 
-// Backend-URL
-export const API_BASE_URL = `https://${BACKEND_HOST}:${BACKEND_PORT}`;
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -34,7 +32,6 @@ export default defineConfig({
             '/api': {
                 target: API_BASE_URL,
                 changeOrigin: true,
-                secure: false,
             }
         }
     }

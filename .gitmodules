@@ -1,0 +1,3 @@
+[submodule "src/assets/spice-html5"]
+	path = src/assets/spice-html5
+	url = https://gitlab.freedesktop.org/spice/spice-html5.git
