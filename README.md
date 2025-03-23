@@ -1,4 +1,4 @@
-# Projektbeschreibung: KVMDash Frontend
+# Project Description: KVMDash Frontend
 
 <table style="border-collapse: collapse; width: 100%;">
     <tr>
@@ -6,103 +6,101 @@
             <img src="src/assets/kvmdash.svg" alt="KvmDash Logo" style="max-width: 100%;">
         </td>
         <td style="padding: 10px; vertical-align: middle;">
-            KVMDash ist eine Webanwendung, die die Verwaltung von Virtual Machines (VMs) auf Linux-Systemen ermöglicht. 
-            Mit einer benutzerfreundlichen Oberfläche erleichtert KVMDash die Administration und Überwachung von Virtualisierungsumgebungen.
-            
-            Dieses Repository enthält das Frontend der KVMDash-Anwendung.
+            KVMDash is a web application that enables the management of Virtual Machines (VMs) on Linux systems.
+            With a user-friendly interface, KVMDash facilitates the administration and monitoring of virtualization environments.
         </td>
     </tr>
 </table>
 
 ## Features
 
-### VM Verwaltung
-* Erstellen, Löschen und Konfigurieren von VMs und Containern über die Weboberfläche.
-* Nutzung von Vorlagen für die schnelle und standardisierte Erstellung von VMs.
+### VM Management
+* Create, delete, and configure VMs and containers through the web interface.
+* Use templates for quick and standardized VM creation.
 
-### Systemmonitoring
-* Echtzeitüberwachung von Ressourcen wie CPU, Arbeitsspeicher, Festplattenauslastung und weiteren wichtigen Systemmetriken.
-* Übersichtliche Darstellung der Systemleistung für eine optimale Kontrolle und Fehleranalyse.
+### System Monitoring
+* Real-time monitoring of resources such as CPU, memory, disk usage, and other important system metrics.
+* Clear visualization of system performance for optimal control and error analysis.
 
-## Demo-Videos
+## Demo Videos
 
 https://github.com/user-attachments/assets/ec76e8fa-f9b1-487d-87a8-6d370dbfb73c
 
-## Systemvoraussetzungen
+## System Requirements
 
-* Node.js 18.x oder neuer
-* npm 9.x oder neuer
-* KVMDash Backend (separat installiert und konfiguriert)
+* Node.js 18.x or newer
+* npm 9.x or newer
+* KVMDash Backend (separately installed and configured)
 
-## Installation & Konfiguration
+## Installation & Configuration
 
-### 1. Repository klonen
+### 1. Clone Repository
 
 ```bash
-# Repository herunterladen
+# Download repository
 git clone https://github.com/KvmDash/KvmDash.front.git kvmdash-frontend
 cd kvmdash-frontend
 ```
 
-### 2. Git-Submodule initialisieren
+### 2. Initialize Git Submodules
 
 ```bash
-# Spice-HTML5 Submodul initialisieren und abrufen
+# Initialize and fetch Spice-HTML5 submodule
 git submodule init
 git submodule update
 ```
 
-Alternativ können Sie das Repository auch direkt mit Submodulen klonen:
+Alternatively, you can clone the repository directly with submodules:
 
 ```bash
 git clone --recurse-submodules https://github.com/KvmDash/KvmDash.front.git kvmdash-frontend
 cd kvmdash-frontend
 ```
 
-### 3. Frontend einrichten
+### 3. Set Up Frontend
 
 ```bash
-# SPICE HTML5 Client konfigurieren
+# Configure SPICE HTML5 Client
 cd src/assets/spice-html5
 cp package.json.in package.json
 sed -i 's/VERSION/0.3/g' package.json
 
-# Zurück ins Hauptverzeichnis wechseln
+# Return to main directory
 cd ../../..
 
-# Dependencies installieren
+# Install dependencies
 npm install
 ```
 
-### 4. Backend-Verbindung konfigurieren
+### 4. Configure Backend Connection
 
-Öffne die Datei `src/config.ts` und passe die Backend-Einstellungen an:
+Open the file `src/config.ts` and adjust the backend settings:
 
 ```javascript
-/// Testumgebung
-// export const BACKEND_PORT = 8000; // Port des Backends
-// export const BACKEND_HOST = 'localhost'; // Hostname/IP-Adresse des Backends
+/// Test environment
+// export const BACKEND_PORT = 8000; // Backend port
+// export const BACKEND_HOST = 'localhost'; // Backend hostname/IP address
 
-export const BACKEND_PORT = 80; // Port des Backends
-export const BACKEND_HOST = 'kvmdash'; // Hostname/IP-Adresse des Backends
+export const BACKEND_PORT = 80; // Backend port
+export const BACKEND_HOST = 'kvmdash'; // Backend hostname/IP address
 ```
 
-### 5. Entwicklungs-Server starten
+### 5. Start Development Server
 
 ```bash
 npm run dev
 ```
 
-Nach dem Start können Sie auf das KVMDash Frontend über http://localhost:5173 zugreifen.
+After starting, you can access the KVMDash Frontend at http://localhost:5173.
 
-### 6. Für Produktion bauen
+### 6. Build for Production
 
 ```bash
 npm run build
 ```
 
-Die Build-Dateien finden Sie im `dist`-Verzeichnis und können auf einem Webserver Ihrer Wahl bereitgestellt werden.
+The build files can be found in the `dist` directory and can be deployed on a web server of your choice.
 
-## Hinweis
+## Note
 
-Dieses Frontend benötigt eine Verbindung zum KVMDash Backend, um ordnungsgemäß zu funktionieren. Bitte stellen Sie sicher, dass das Backend verfügbar und korrekt konfiguriert ist.
+This frontend requires a connection to the KVMDash Backend to function properly. Please ensure that the backend is available and correctly configured.
