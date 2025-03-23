@@ -103,4 +103,4 @@ The build files can be found in the `dist` directory and can be deployed on a we
 
 ## Note
 
-This frontend requires a connection to the KVMDash Backend to function properly. Please ensure that the backend is available and correctly configured.
+This frontend requires a connection to the KVMDash Backend (https://github.com/KvmDash/KvmDash.back)  to function properly. Please ensure that the backend is available and correctly configured.
