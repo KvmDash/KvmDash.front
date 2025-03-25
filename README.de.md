@@ -92,6 +92,16 @@ npm run dev
 
 Nach dem Start können Sie auf das KVMDash Frontend über http://localhost:5173 zugreifen.
 
+### Wichtiger Hinweis zur Entwicklungsumgebung
+
+Der Entwicklungsserver unterstützt keine WebSocket-Verbindungen, die für die SPICE Remote-Konsole benötigt werden. 
+Folgende Funktionen sind nur in der Produktivumgebung mit Apache/Nginx verfügbar:
+- SPICE Remote-Konsole
+- WebSocket-Verbindungen zu VMs
+
+Für die vollständige Funktionalität, insbesondere die Remote-Konsole, ist ein Produktiv-Webserver (Apache/Nginx) 
+mit WebSocket-Unterstützung erforderlich.
+
 ### 6. Für Produktion bauen
 
 ```bash
