@@ -52,8 +52,9 @@ export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Ele
     const containerRef = useRef<HTMLDivElement>(null);
     const spiceConnectionRef = useRef<SpiceMainConn | null>(null);
     const renderLoopRef = useRef<number | undefined>(undefined); // Animation Frame Referenz
-
     useEffect(() => {
+
+
         if (!containerRef.current) return;
 
         const container = containerRef.current;
@@ -71,6 +72,12 @@ export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Ele
         const display = createSpiceDisplay(container);
 
         let isComponentMounted = true; // Flag für Cleanup
+
+        console.log('SpiceViewer Props:', {
+            receivedHost: host,
+            receivedPort: port,
+            uri: `ws://${host}:${port}`
+        });
 
         try {
             spiceConnectionRef.current = new SpiceMainConn({

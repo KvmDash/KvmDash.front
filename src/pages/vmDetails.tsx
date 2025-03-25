@@ -7,7 +7,6 @@ import type { VmStats } from '../types/vm.types';
 import { Box, Card, CardContent, CardHeader} from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
-import { BACKEND_HOST } from '../config';
 import VmMetrics from '../components/vm/VmMetrics';  // Nur noch default import
 
 export default function VmDetailsPage() {
@@ -61,7 +60,7 @@ export default function VmDetailsPage() {
                         />
                         <CardContent>
                             <SpiceViewer
-                                host={BACKEND_HOST}
+                                host={spiceConnection.host} 
                                 port={spiceConnection.wsPort}
                             />
                         </CardContent>
