@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getVmSnapshots, deleteVmSnapshot, createVmSnapshot } from '../../services/virtualization';
+import { getVmSnapshots, deleteVmSnapshot, createVmSnapshot, revertVmSnapshot } from '../../services/virtualization';
 import {
     Card, CardContent, CardHeader, Table, TableBody,
     TableCell, TableContainer, TableHead, TableRow,
@@ -12,11 +12,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import AddIcon from '@mui/icons-material/Add';
 
+// Component props definition
 interface VmSnapshotsProps {
     vmName: string;
 }
 
 export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
+    // State for storing snapshot list
     const [snapshots, setSnapshots] = useState<Array<{
         name: string;
         creationTime: string;
@@ -24,8 +26,12 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
         description: string;
         parent: string | null;
     }>>([]);
+    
+    // Loading and error states
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    
+    // Dialog states for different operations
     const [deleteDialog, setDeleteDialog] = useState<{
         open: boolean,
         snapshot: string | null,
@@ -35,6 +41,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
         snapshot: null,
         hasChildren: false
     });
+    
     const [createDialog, setCreateDialog] = useState<{
         open: boolean;
         name: string;
@@ -44,12 +51,27 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
         name: '',
         description: ''
     });
-    const [snackbar, setSnackbar] = useState<{ open: boolean, message: string, severity: 'success' | 'error' }>({
+    
+    const [revertDialog, setRevertDialog] = useState<{
+        open: boolean;
+        snapshot: string | null;
+    }>({
+        open: false,
+        snapshot: null
+    });
+    
+    // Snackbar for operation feedback
+    const [snackbar, setSnackbar] = useState<{
+        open: boolean,
+        message: string,
+        severity: 'success' | 'error'
+    }>({
         open: false,
         message: '',
         severity: 'success'
     });
 
+    // Fetch snapshots on component mount or when VM name changes
     useEffect(() => {
         const fetchSnapshots = async () => {
             try {
@@ -66,20 +88,23 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
         fetchSnapshots();
     }, [vmName]);
 
+    // Helper function to format Unix timestamp to localized date string
     const formatDate = (timestamp: string) => {
         return new Date(parseInt(timestamp) * 1000).toLocaleString('de-DE');
     };
 
+    // Handler for snapshot delete button click
     const handleDeleteClick = (snapshotName: string) => {
-        // Prüfen ob der Snapshot Children hat
+        // Check if the snapshot has child snapshots
         const hasChildren = snapshots.some(s => s.parent === snapshotName);
-
         setDeleteDialog({
             open: true,
             snapshot: snapshotName,
             hasChildren
         });
     };
+
+    // Handler for snapshot delete confirmation
     const handleDeleteConfirm = async () => {
         if (!deleteDialog.snapshot) return;
 
@@ -90,7 +115,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                 message: 'Snapshot erfolgreich gelöscht',
                 severity: 'success'
             });
-            // Snapshot-Liste neu laden
+            // Refresh snapshot list after deletion
             const response = await getVmSnapshots(vmName);
             setSnapshots(response.snapshots);
         } catch (err) {
@@ -104,6 +129,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
         }
     };
 
+    // Handler for snapshot create button click
     const handleCreateClick = () => {
         setCreateDialog({
             open: true,
@@ -112,6 +138,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
         });
     };
 
+    // Handler for snapshot create confirmation
     const handleCreateConfirm = async () => {
         try {
             await createVmSnapshot(vmName, {
@@ -123,7 +150,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                 message: 'Snapshot erfolgreich erstellt',
                 severity: 'success'
             });
-            // Snapshot-Liste neu laden
+            // Refresh snapshot list after creation
             const response = await getVmSnapshots(vmName);
             setSnapshots(response.snapshots);
         } catch (err) {
@@ -137,11 +164,47 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
         }
     };
 
+    // Handler for snapshot revert button click
+    const handleRevertClick = (snapshotName: string) => {
+        setRevertDialog({
+            open: true,
+            snapshot: snapshotName
+        });
+    };
+
+    // Handler for snapshot revert confirmation
+    const handleRevertConfirm = async () => {
+        if (!revertDialog.snapshot) return;
+
+        try {
+            await revertVmSnapshot(vmName, revertDialog.snapshot);
+            setSnackbar({
+                open: true,
+                message: 'Snapshot erfolgreich wiederhergestellt',
+                severity: 'success'
+            });
+            // Refresh snapshot list after revert
+            const response = await getVmSnapshots(vmName);
+            setSnapshots(response.snapshots);
+        } catch (err) {
+            setSnackbar({
+                open: true,
+                message: err instanceof Error ? err.message : 'Fehler bei der Wiederherstellung',
+                severity: 'error'
+            });
+        } finally {
+            setRevertDialog({ open: false, snapshot: null });
+        }
+    };
+
+    // Show loading state
     if (loading) return <div>Lade Snapshots...</div>;
+    // Show error state if any
     if (error) return <div>Fehler: {error}</div>;
 
     return (
         <>
+            {/* Main snapshot card */}
             <Card elevation={3}>
                 <CardHeader
                     title="VM Snapshots"
@@ -176,11 +239,13 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                                         <TableCell>{snapshot.description || '-'}</TableCell>
                                         <TableCell>{snapshot.parent || '-'}</TableCell>
                                         <TableCell>
+                                            {/* Revert snapshot button */}
                                             <Tooltip title="Wiederherstellen">
-                                                <IconButton>
+                                                <IconButton onClick={() => handleRevertClick(snapshot.name)}>
                                                     <RestoreIcon />
                                                 </IconButton>
                                             </Tooltip>
+                                            {/* Delete snapshot button */}
                                             <Tooltip title="Löschen">
                                                 <IconButton
                                                     color="error"
@@ -264,7 +329,31 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                 </DialogActions>
             </Dialog>
 
-            {/* Status Snackbar */}
+            {/* Revert Confirmation Dialog */}
+            <Dialog
+                open={revertDialog.open}
+                onClose={() => setRevertDialog({ open: false, snapshot: null })}
+            >
+                <DialogTitle>Snapshot wiederherstellen</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Möchten Sie wirklich zum Snapshot "{revertDialog.snapshot}" zurückkehren?
+                        <Alert severity="warning" sx={{ mt: 2 }}>
+                            Achtung: Alle Änderungen nach diesem Snapshot gehen verloren!
+                        </Alert>
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setRevertDialog({ open: false, snapshot: null })}>
+                        Abbrechen
+                    </Button>
+                    <Button onClick={handleRevertConfirm} color="primary" variant="contained">
+                        Wiederherstellen
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Status Snackbar for user feedback */}
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={6000}

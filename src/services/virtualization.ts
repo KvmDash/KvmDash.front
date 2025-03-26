@@ -4,15 +4,15 @@ import { ApiError } from '@interfaces/api.types';
 import { VmStatusResponse, VmFormData, VmActionResponse, VmStats } from '@interfaces/vm.types';
 
 /**
- * Holt die Liste aller virtuellen Maschinen vom Backend
- * @throws Error wenn die Anfrage fehlschlägt oder der Token fehlt
- * @returns Array von VMs mit Name und Status
+ * Fetches the list of all virtual machines from the backend
+ * @throws Error when the request fails or the token is missing
+ * @returns Array of VMs with name and status
  */
 export const getVirtualMachines = async (): Promise<VMResponse[]> => {
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
-        throw new Error('Kein Auth-Token gefunden');
+        throw new Error('No auth token found');
     }
     
     try {
@@ -36,22 +36,22 @@ export const getVirtualMachines = async (): Promise<VMResponse[]> => {
         if (error instanceof Error) {
             throw error;
         }
-        // Type Assertion für den API Error
+        // Type Assertion for the API Error
         return handleApiError(error as ApiError);
     }
     
 };
 
 /**
- * Holt den Status aller virtuellen Maschinen vom Backend
- * @throws Error wenn die Anfrage fehlschlägt oder der Token fehlt
- * @returns 
+ * Fetches the status of all virtual machines from the backend
+ * @throws Error when the request fails or the token is missing
+ * @returns Status information for all VMs
  */
 export const getVirtualMachineStatus = async (): Promise<VmStatusResponse> => {
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
-        throw new Error('Kein Auth-Token gefunden');
+        throw new Error('No auth token found');
     }
     
     try {
@@ -74,17 +74,21 @@ export const getVirtualMachineStatus = async (): Promise<VmStatusResponse> => {
         if (error instanceof Error) {
             throw error;
         }
-        // Type Assertion für den API Error
+        // Type Assertion for the API Error
         return handleApiError(error as ApiError);
     }
 }
 
-
+/**
+ * Creates a new virtual machine
+ * @param vmData Form data containing virtual machine configuration
+ * @returns Boolean indicating success
+ */
 export const createVirtualMachine = async (vmData: VmFormData): Promise<boolean> => {
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
-        throw new Error('Kein Auth-Token gefunden');
+        throw new Error('No auth token found');
     }
     
     try {
@@ -116,15 +120,16 @@ export const createVirtualMachine = async (vmData: VmFormData): Promise<boolean>
 
 
 /**
- * Startet eine virtuelle Maschine
- * @param name Name der VM
- * @throws Error wenn die Anfrage fehlschlägt
+ * Starts a virtual machine
+ * @param name Name of the VM
+ * @throws Error when the request fails
+ * @returns Promise with the response from the VM action
  */
 export const startVirtualMachine = async (name: string): Promise<VmActionResponse> => {
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
-        throw new Error('Kein Auth-Token gefunden');
+        throw new Error('No auth token found');
     }
     
     try {
@@ -153,15 +158,16 @@ export const startVirtualMachine = async (name: string): Promise<VmActionRespons
 };
 
 /**
- * Stoppt eine virtuelle Maschine
- * @param name Name der VM
- * @param force Wenn true, wird die VM hart gestoppt
+ * Stops a virtual machine
+ * @param name Name of the VM
+ * @param force If true, the VM will be hard stopped
+ * @returns Promise with the response from the VM action
  */
 export const stopVirtualMachine = async (name: string, force = false): Promise<VmActionResponse> => {
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
-        throw new Error('Kein Auth-Token gefunden');
+        throw new Error('No auth token found');
     }
     
     try {
@@ -191,14 +197,15 @@ export const stopVirtualMachine = async (name: string, force = false): Promise<V
 };
 
 /**
- * Startet eine virtuelle Maschine neu
- * @param name Name der VM
+ * Reboots a virtual machine
+ * @param name Name of the VM
+ * @returns Promise with the response from the VM action
  */
 export const rebootVirtualMachine = async (name: string): Promise<VmActionResponse> => {
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
-        throw new Error('Kein Auth-Token gefunden');
+        throw new Error('No auth token found');
     }
     
     try {
@@ -227,15 +234,16 @@ export const rebootVirtualMachine = async (name: string): Promise<VmActionRespon
 };
 
 /**
- * Löscht eine virtuelle Maschine
- * @param name Name der VM
- * @param deleteVhd Wenn true, werden auch die VHD-Dateien gelöscht
+ * Deletes a virtual machine
+ * @param name Name of the VM
+ * @param deleteVhd If true, the VHD files will also be deleted
+ * @returns Promise with the response from the VM action
  */
 export const deleteVirtualMachine = async (name: string, deleteVhd = false): Promise<VmActionResponse> => {
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
-        throw new Error('Kein Auth-Token gefunden');
+        throw new Error('No auth token found');
     }
     
     try {
@@ -265,14 +273,15 @@ export const deleteVirtualMachine = async (name: string, deleteVhd = false): Pro
 };
 
 /**
- * Holt detaillierte Informationen zu einer virtuellen Maschine
- * @param vmName Name der VM
+ * Fetches detailed information about a virtual machine
+ * @param vmName Name of the VM
+ * @returns Promise with VM statistics
  */
 export const getVmDetails = async (vmName: string): Promise<VmStats> => {
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
-        throw new Error('Kein Auth-Token gefunden');
+        throw new Error('No auth token found');
     }
     
     try {
@@ -299,7 +308,11 @@ export const getVmDetails = async (vmName: string): Promise<VmStats> => {
     }
 };
 
-
+/**
+ * Gets SPICE connection details for a virtual machine
+ * @param vmName Name of the VM
+ * @returns Connection details including ports and host
+ */
 export const getSpiceConnection = async (vmName: string): Promise<{
     spicePort: number;
     wsPort: number;
@@ -308,7 +321,7 @@ export const getSpiceConnection = async (vmName: string): Promise<{
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
-        throw new Error('Kein Auth-Token gefunden');
+        throw new Error('No auth token found');
     }
     
     try {
@@ -335,10 +348,10 @@ export const getSpiceConnection = async (vmName: string): Promise<{
     }
 };
 
-
 /**
- * Holt alle Snapshots einer VM
- * @param vmName Name der virtuellen Maschine
+ * Fetches all snapshots of a VM
+ * @param vmName Name of the virtual machine
+ * @returns Promise with snapshot information
  */
 export const getVmSnapshots = async (vmName: string): Promise<{
     vm: string;
@@ -353,7 +366,7 @@ export const getVmSnapshots = async (vmName: string): Promise<{
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
-        throw new Error('Kein Auth-Token gefunden');
+        throw new Error('No auth token found');
     }
     
     try {
@@ -380,17 +393,17 @@ export const getVmSnapshots = async (vmName: string): Promise<{
     }
 };
 
-
 /**
- * Löscht einen Snapshot einer VM
- * @param vmName Name der VM
- * @param snapshotName Name des Snapshots
+ * Deletes a snapshot of a VM
+ * @param vmName Name of the VM
+ * @param snapshotName Name of the snapshot
+ * @returns Promise with the response from the VM action
  */
 export const deleteVmSnapshot = async (vmName: string, snapshotName: string): Promise<VmActionResponse> => {
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
-        throw new Error('Kein Auth-Token gefunden');
+        throw new Error('No auth token found');
     }
     
     try {
@@ -418,12 +431,17 @@ export const deleteVmSnapshot = async (vmName: string, snapshotName: string): Pr
     }
 };
 
-
+/**
+ * Creates a snapshot for a virtual machine
+ * @param vmName Name of the VM
+ * @param data Object containing snapshot details (name and optional description)
+ * @returns Promise with the response from the VM action
+ */
 export const createVmSnapshot = async (vmName: string, data: { name: string; description?: string }): Promise<VmActionResponse> => {
     const token = localStorage.getItem('jwt_token');
     
     if (!token) {
-        throw new Error('Kein Auth-Token gefunden');
+        throw new Error('No auth token found');
     }
     
     try {
@@ -434,6 +452,44 @@ export const createVmSnapshot = async (vmName: string, data: { name: string; des
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                statusText: response.statusText
+            };
+        }
+
+        return await response.json();
+    } catch (error) {
+        if (error instanceof Error) {
+            throw error;
+        }
+        return handleApiError(error as ApiError);
+    }
+};
+
+/**
+ * Reverts a VM to a specific snapshot
+ * @param vmName Name of the VM
+ * @param snapshotName Name of the snapshot to revert to
+ * @returns Promise with the response from the VM action
+ */
+export const revertVmSnapshot = async (vmName: string, snapshotName: string): Promise<VmActionResponse> => {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        throw new Error('No auth token found');
+    }
+    
+    try {
+        const response = await fetch(`/api/virt/domain/${vmName}/snapshot/${snapshotName}/revert`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
         });
 
         if (!response.ok) {
