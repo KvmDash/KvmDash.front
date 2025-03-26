@@ -4,10 +4,11 @@ import { getVmDetails, getSpiceConnection } from '../services/virtualization';
 import { SpiceViewer } from '../components/vm/SpiceViewer';
 import type { VmStats } from '../types/vm.types';
 
-import { Box, Card, CardContent, CardHeader} from '@mui/material';
+import { Box, Card, CardContent, CardHeader } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
-import VmMetrics from '../components/vm/VmMetrics';  // Nur noch default import
+import VmMetrics from '../components/vm/VmMetrics';  
+import VmSnapshots from '../components/vm/VmSnapshots';  
 
 export default function VmDetailsPage() {
     const { vmName } = useParams<{ vmName: string }>();
@@ -60,12 +61,17 @@ export default function VmDetailsPage() {
                         />
                         <CardContent>
                             <SpiceViewer
-                                host={spiceConnection.host} 
+                                host={spiceConnection.host}
                                 port={spiceConnection.wsPort}
                             />
                         </CardContent>
                     </Card>
                 </Grid>
+
+                <Grid size={{ xs: 12 }}>
+                    <VmSnapshots vmName={vmName!} />
+                </Grid>
+
             </Grid>
         </Box>
     );
