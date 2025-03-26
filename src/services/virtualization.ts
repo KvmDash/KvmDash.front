@@ -379,3 +379,41 @@ export const getVmSnapshots = async (vmName: string): Promise<{
         return handleApiError(error as ApiError);
     }
 };
+
+
+/**
+ * Löscht einen Snapshot einer VM
+ * @param vmName Name der VM
+ * @param snapshotName Name des Snapshots
+ */
+export const deleteVmSnapshot = async (vmName: string, snapshotName: string): Promise<VmActionResponse> => {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        throw new Error('Kein Auth-Token gefunden');
+    }
+    
+    try {
+        const response = await fetch(`/api/virt/domain/${vmName}/snapshot/${snapshotName}/delete`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                statusText: response.statusText
+            };
+        }
+
+        return await response.json();
+    } catch (error) {
+        if (error instanceof Error) {
+            throw error;
+        }
+        return handleApiError(error as ApiError);
+    }
+};
