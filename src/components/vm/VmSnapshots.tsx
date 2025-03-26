@@ -26,9 +26,14 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
     }>>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [deleteDialog, setDeleteDialog] = useState<{ open: boolean, snapshot: string | null }>({
+    const [deleteDialog, setDeleteDialog] = useState<{
+        open: boolean,
+        snapshot: string | null,
+        hasChildren: boolean
+    }>({
         open: false,
-        snapshot: null
+        snapshot: null,
+        hasChildren: false
     });
     const [createDialog, setCreateDialog] = useState<{
         open: boolean;
@@ -66,12 +71,15 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
     };
 
     const handleDeleteClick = (snapshotName: string) => {
+        // Prüfen ob der Snapshot Children hat
+        const hasChildren = snapshots.some(s => s.parent === snapshotName);
+
         setDeleteDialog({
             open: true,
-            snapshot: snapshotName
+            snapshot: snapshotName,
+            hasChildren
         });
     };
-
     const handleDeleteConfirm = async () => {
         if (!deleteDialog.snapshot) return;
 
@@ -92,7 +100,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                 severity: 'error'
             });
         } finally {
-            setDeleteDialog({ open: false, snapshot: null });
+            setDeleteDialog({ open: false, snapshot: null, hasChildren: false });
         }
     };
 
@@ -233,20 +241,25 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
             {/* Delete Confirmation Dialog */}
             <Dialog
                 open={deleteDialog.open}
-                onClose={() => setDeleteDialog({ open: false, snapshot: null })}
+                onClose={() => setDeleteDialog({ open: false, snapshot: null, hasChildren: false })}
             >
                 <DialogTitle>Snapshot löschen</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Möchten Sie den Snapshot "{deleteDialog.snapshot}" wirklich löschen?
+                        {deleteDialog.hasChildren && (
+                            <Alert severity="warning" sx={{ mt: 2 }}>
+                                Achtung: Dieser Snapshot hat abhängige Snapshots, die ebenfalls gelöscht werden!
+                            </Alert>
+                        )}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setDeleteDialog({ open: false, snapshot: null })}>
+                    <Button onClick={() => setDeleteDialog({ open: false, snapshot: null, hasChildren: false })}>
                         Abbrechen
                     </Button>
                     <Button onClick={handleDeleteConfirm} color="error" variant="contained">
-                        Löschen
+                        {deleteDialog.hasChildren ? 'Alle löschen' : 'Löschen'}
                     </Button>
                 </DialogActions>
             </Dialog>
