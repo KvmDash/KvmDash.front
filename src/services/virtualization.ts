@@ -334,3 +334,48 @@ export const getSpiceConnection = async (vmName: string): Promise<{
         return handleApiError(error as ApiError);
     }
 };
+
+
+/**
+ * Holt alle Snapshots einer VM
+ * @param vmName Name der virtuellen Maschine
+ */
+export const getVmSnapshots = async (vmName: string): Promise<{
+    vm: string;
+    snapshots: Array<{
+        name: string;
+        creationTime: string;
+        state: string;
+        description: string;
+        parent: string | null;
+    }>;
+}> => {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        throw new Error('Kein Auth-Token gefunden');
+    }
+    
+    try {
+        const response = await fetch(`/api/virt/domain/${vmName}/snapshots`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                statusText: response.statusText
+            };
+        }
+
+        return await response.json();
+    } catch (error) {
+        if (error instanceof Error) {
+            throw error;
+        }
+        return handleApiError(error as ApiError);
+    }
+};
