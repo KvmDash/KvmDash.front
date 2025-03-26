@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
-import { getVmSnapshots, deleteVmSnapshot } from '../../services/virtualization';
+import { getVmSnapshots, deleteVmSnapshot, createVmSnapshot } from '../../services/virtualization';
 import {
     Card, CardContent, CardHeader, Table, TableBody,
     TableCell, TableContainer, TableHead, TableRow,
     Paper, IconButton, Tooltip, Dialog, DialogTitle,
     DialogContent, DialogContentText, DialogActions,
-    Button, Alert, Snackbar
+    Button, Alert, Snackbar, TextField
 } from '@mui/material';
 import RestoreIcon from '@mui/icons-material/Restore';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import AddIcon from '@mui/icons-material/Add';
 
 interface VmSnapshotsProps {
     vmName: string;
@@ -25,11 +26,20 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
     }>>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [deleteDialog, setDeleteDialog] = useState<{open: boolean, snapshot: string | null}>({
+    const [deleteDialog, setDeleteDialog] = useState<{ open: boolean, snapshot: string | null }>({
         open: false,
         snapshot: null
     });
-    const [snackbar, setSnackbar] = useState<{open: boolean, message: string, severity: 'success' | 'error'}>({
+    const [createDialog, setCreateDialog] = useState<{
+        open: boolean;
+        name: string;
+        description: string;
+    }>({
+        open: false,
+        name: '',
+        description: ''
+    });
+    const [snackbar, setSnackbar] = useState<{ open: boolean, message: string, severity: 'success' | 'error' }>({
         open: false,
         message: '',
         severity: 'success'
@@ -86,6 +96,39 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
         }
     };
 
+    const handleCreateClick = () => {
+        setCreateDialog({
+            open: true,
+            name: '',
+            description: ''
+        });
+    };
+
+    const handleCreateConfirm = async () => {
+        try {
+            await createVmSnapshot(vmName, {
+                name: createDialog.name,
+                description: createDialog.description
+            });
+            setSnackbar({
+                open: true,
+                message: 'Snapshot erfolgreich erstellt',
+                severity: 'success'
+            });
+            // Snapshot-Liste neu laden
+            const response = await getVmSnapshots(vmName);
+            setSnapshots(response.snapshots);
+        } catch (err) {
+            setSnackbar({
+                open: true,
+                message: err instanceof Error ? err.message : 'Fehler beim Erstellen des Snapshots',
+                severity: 'error'
+            });
+        } finally {
+            setCreateDialog(prev => ({ ...prev, open: false }));
+        }
+    };
+
     if (loading) return <div>Lade Snapshots...</div>;
     if (error) return <div>Fehler: {error}</div>;
 
@@ -95,6 +138,13 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                 <CardHeader
                     title="VM Snapshots"
                     avatar={<PhotoCameraIcon color="primary" />}
+                    action={
+                        <Tooltip title="Neuen Snapshot erstellen">
+                            <IconButton onClick={handleCreateClick} color="primary">
+                                <AddIcon />
+                            </IconButton>
+                        </Tooltip>
+                    }
                 />
                 <CardContent>
                     <TableContainer component={Paper}>
@@ -124,7 +174,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                                                 </IconButton>
                                             </Tooltip>
                                             <Tooltip title="Löschen">
-                                                <IconButton 
+                                                <IconButton
                                                     color="error"
                                                     onClick={() => handleDeleteClick(snapshot.name)}
                                                 >
@@ -139,6 +189,46 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                     </TableContainer>
                 </CardContent>
             </Card>
+
+            {/* Create Snapshot Dialog */}
+            <Dialog
+                open={createDialog.open}
+                onClose={() => setCreateDialog(prev => ({ ...prev, open: false }))}
+            >
+                <DialogTitle>Neuen Snapshot erstellen</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        label="Name"
+                        fullWidth
+                        value={createDialog.name}
+                        onChange={(e) => setCreateDialog(prev => ({ ...prev, name: e.target.value }))}
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Beschreibung (optional)"
+                        fullWidth
+                        multiline
+                        rows={2}
+                        value={createDialog.description}
+                        onChange={(e) => setCreateDialog(prev => ({ ...prev, description: e.target.value }))}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setCreateDialog(prev => ({ ...prev, open: false }))}>
+                        Abbrechen
+                    </Button>
+                    <Button
+                        onClick={handleCreateConfirm}
+                        color="primary"
+                        variant="contained"
+                        disabled={!createDialog.name}
+                    >
+                        Erstellen
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             {/* Delete Confirmation Dialog */}
             <Dialog
@@ -165,9 +255,10 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={6000}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
             >
-                <Alert 
+                <Alert
                     severity={snackbar.severity}
                     onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
                 >
