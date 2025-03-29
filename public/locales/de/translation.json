@@ -110,6 +110,33 @@
         "cpuCount": "CPUs",
         "ramUsage": "RAM Auslastung",
         "totalRam": "Gesamt RAM"
+      },
+      "snapshots": {
+        "title": "VM Snapshots",
+        "createNew": "Neuen Snapshot erstellen",
+        "name": "Name",
+        "createdAt": "Erstellt am",
+        "status": "Status",
+        "description": "Beschreibung",
+        "descriptionOptional": "Beschreibung (optional)",
+        "parent": "Übergeordnet",
+        "actions": "Aktionen",
+        "revert": "Wiederherstellen",
+        "create": "Erstellen",
+        "loadError": "Fehler beim Laden der Snapshots",
+        "deleteSuccess": "Snapshot erfolgreich gelöscht",
+        "deleteError": "Fehler beim Löschen des Snapshots",
+        "createSuccess": "Snapshot erfolgreich erstellt",
+        "createError": "Fehler beim Erstellen des Snapshots",
+        "revertSuccess": "Snapshot erfolgreich wiederhergestellt",
+        "revertError": "Fehler bei der Wiederherstellung",
+        "deleteTitle": "Snapshot löschen",
+        "deleteConfirm": "Möchten Sie den Snapshot \"{{snapshot}}\" wirklich löschen?",
+        "deleteChildrenWarning": "Achtung: Dieser Snapshot hat abhängige Snapshots, die ebenfalls gelöscht werden!",
+        "deleteAll": "Alle löschen",
+        "revertTitle": "Snapshot wiederherstellen",
+        "revertConfirm": "Möchten Sie wirklich zum Snapshot \"{{snapshot}}\" zurückkehren?",
+        "revertWarning": "Achtung: Alle Änderungen nach diesem Snapshot gehen verloren!"
       }
     },
     "iso": {
