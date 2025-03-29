@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getVmSnapshots, deleteVmSnapshot, createVmSnapshot, revertVmSnapshot } from '../../services/virtualization';
 import {
     Card, CardContent, CardHeader, Table, TableBody,
@@ -18,6 +19,8 @@ interface VmSnapshotsProps {
 }
 
 export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
+    const { t } = useTranslation();
+    
     // State for storing snapshot list
     const [snapshots, setSnapshots] = useState<Array<{
         name: string;
@@ -79,18 +82,18 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                 const response = await getVmSnapshots(vmName);
                 setSnapshots(response.snapshots);
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'Fehler beim Laden der Snapshots');
+                setError(err instanceof Error ? err.message : t('vm.snapshots.loadError'));
             } finally {
                 setLoading(false);
             }
         };
 
         fetchSnapshots();
-    }, [vmName]);
+    }, [vmName, t]);
 
     // Helper function to format Unix timestamp to localized date string
     const formatDate = (timestamp: string) => {
-        return new Date(parseInt(timestamp) * 1000).toLocaleString('de-DE');
+        return new Date(parseInt(timestamp) * 1000).toLocaleString();
     };
 
     // Handler for snapshot delete button click
@@ -112,7 +115,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
             await deleteVmSnapshot(vmName, deleteDialog.snapshot);
             setSnackbar({
                 open: true,
-                message: 'Snapshot erfolgreich gelöscht',
+                message: t('vm.snapshots.deleteSuccess'),
                 severity: 'success'
             });
             // Refresh snapshot list after deletion
@@ -121,7 +124,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
         } catch (err) {
             setSnackbar({
                 open: true,
-                message: err instanceof Error ? err.message : 'Fehler beim Löschen des Snapshots',
+                message: err instanceof Error ? err.message : t('vm.snapshots.deleteError'),
                 severity: 'error'
             });
         } finally {
@@ -147,7 +150,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
             });
             setSnackbar({
                 open: true,
-                message: 'Snapshot erfolgreich erstellt',
+                message: t('vm.snapshots.createSuccess'),
                 severity: 'success'
             });
             // Refresh snapshot list after creation
@@ -156,7 +159,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
         } catch (err) {
             setSnackbar({
                 open: true,
-                message: err instanceof Error ? err.message : 'Fehler beim Erstellen des Snapshots',
+                message: err instanceof Error ? err.message : t('vm.snapshots.createError'),
                 severity: 'error'
             });
         } finally {
@@ -180,7 +183,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
             await revertVmSnapshot(vmName, revertDialog.snapshot);
             setSnackbar({
                 open: true,
-                message: 'Snapshot erfolgreich wiederhergestellt',
+                message: t('vm.snapshots.revertSuccess'),
                 severity: 'success'
             });
             // Refresh snapshot list after revert
@@ -189,7 +192,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
         } catch (err) {
             setSnackbar({
                 open: true,
-                message: err instanceof Error ? err.message : 'Fehler bei der Wiederherstellung',
+                message: err instanceof Error ? err.message : t('vm.snapshots.revertError'),
                 severity: 'error'
             });
         } finally {
@@ -198,19 +201,19 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
     };
 
     // Show loading state
-    if (loading) return <div>Lade Snapshots...</div>;
+    if (loading) return <div>{t('common.loading')}</div>;
     // Show error state if any
-    if (error) return <div>Fehler: {error}</div>;
+    if (error) return <div>{t('common.error')}: {error}</div>;
 
     return (
         <>
             {/* Main snapshot card */}
             <Card elevation={3}>
                 <CardHeader
-                    title="VM Snapshots"
+                    title={t('vm.snapshots.title')}
                     avatar={<PhotoCameraIcon color="primary" />}
                     action={
-                        <Tooltip title="Neuen Snapshot erstellen">
+                        <Tooltip title={t('vm.snapshots.createNew')}>
                             <IconButton onClick={handleCreateClick} color="primary">
                                 <AddIcon />
                             </IconButton>
@@ -222,12 +225,12 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Erstellt am</TableCell>
-                                    <TableCell>Status</TableCell>
-                                    <TableCell>Beschreibung</TableCell>
-                                    <TableCell>Parent</TableCell>
-                                    <TableCell>Aktionen</TableCell>
+                                    <TableCell>{t('vm.snapshots.name')}</TableCell>
+                                    <TableCell>{t('vm.snapshots.createdAt')}</TableCell>
+                                    <TableCell>{t('vm.snapshots.status')}</TableCell>
+                                    <TableCell>{t('vm.snapshots.description')}</TableCell>
+                                    <TableCell>{t('vm.snapshots.parent')}</TableCell>
+                                    <TableCell>{t('vm.snapshots.actions')}</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -240,13 +243,13 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                                         <TableCell>{snapshot.parent || '-'}</TableCell>
                                         <TableCell>
                                             {/* Revert snapshot button */}
-                                            <Tooltip title="Wiederherstellen">
+                                            <Tooltip title={t('vm.snapshots.revert')}>
                                                 <IconButton onClick={() => handleRevertClick(snapshot.name)}>
                                                     <RestoreIcon />
                                                 </IconButton>
                                             </Tooltip>
                                             {/* Delete snapshot button */}
-                                            <Tooltip title="Löschen">
+                                            <Tooltip title={t('common.delete')}>
                                                 <IconButton
                                                     color="error"
                                                     onClick={() => handleDeleteClick(snapshot.name)}
@@ -268,19 +271,19 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                 open={createDialog.open}
                 onClose={() => setCreateDialog(prev => ({ ...prev, open: false }))}
             >
-                <DialogTitle>Neuen Snapshot erstellen</DialogTitle>
+                <DialogTitle>{t('vm.snapshots.createNew')}</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
                         margin="dense"
-                        label="Name"
+                        label={t('vm.snapshots.name')}
                         fullWidth
                         value={createDialog.name}
                         onChange={(e) => setCreateDialog(prev => ({ ...prev, name: e.target.value }))}
                     />
                     <TextField
                         margin="dense"
-                        label="Beschreibung (optional)"
+                        label={t('vm.snapshots.descriptionOptional')}
                         fullWidth
                         multiline
                         rows={2}
@@ -290,7 +293,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setCreateDialog(prev => ({ ...prev, open: false }))}>
-                        Abbrechen
+                        {t('common.cancel')}
                     </Button>
                     <Button
                         onClick={handleCreateConfirm}
@@ -298,7 +301,7 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                         variant="contained"
                         disabled={!createDialog.name}
                     >
-                        Erstellen
+                        {t('vm.snapshots.create')}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -308,23 +311,23 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                 open={deleteDialog.open}
                 onClose={() => setDeleteDialog({ open: false, snapshot: null, hasChildren: false })}
             >
-                <DialogTitle>Snapshot löschen</DialogTitle>
+                <DialogTitle>{t('vm.snapshots.deleteTitle')}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Möchten Sie den Snapshot "{deleteDialog.snapshot}" wirklich löschen?
+                        {t('vm.snapshots.deleteConfirm', { snapshot: deleteDialog.snapshot })}
                         {deleteDialog.hasChildren && (
                             <Alert severity="warning" sx={{ mt: 2 }}>
-                                Achtung: Dieser Snapshot hat abhängige Snapshots, die ebenfalls gelöscht werden!
+                                {t('vm.snapshots.deleteChildrenWarning')}
                             </Alert>
                         )}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setDeleteDialog({ open: false, snapshot: null, hasChildren: false })}>
-                        Abbrechen
+                        {t('common.cancel')}
                     </Button>
                     <Button onClick={handleDeleteConfirm} color="error" variant="contained">
-                        {deleteDialog.hasChildren ? 'Alle löschen' : 'Löschen'}
+                        {deleteDialog.hasChildren ? t('vm.snapshots.deleteAll') : t('common.delete')}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -334,21 +337,21 @@ export default function VmSnapshots({ vmName }: VmSnapshotsProps) {
                 open={revertDialog.open}
                 onClose={() => setRevertDialog({ open: false, snapshot: null })}
             >
-                <DialogTitle>Snapshot wiederherstellen</DialogTitle>
+                <DialogTitle>{t('vm.snapshots.revertTitle')}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Möchten Sie wirklich zum Snapshot "{revertDialog.snapshot}" zurückkehren?
+                        {t('vm.snapshots.revertConfirm', { snapshot: revertDialog.snapshot })}
                         <Alert severity="warning" sx={{ mt: 2 }}>
-                            Achtung: Alle Änderungen nach diesem Snapshot gehen verloren!
+                            {t('vm.snapshots.revertWarning')}
                         </Alert>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setRevertDialog({ open: false, snapshot: null })}>
-                        Abbrechen
+                        {t('common.cancel')}
                     </Button>
                     <Button onClick={handleRevertConfirm} color="primary" variant="contained">
-                        Wiederherstellen
+                        {t('vm.snapshots.revert')}
                     </Button>
                 </DialogActions>
             </Dialog>
