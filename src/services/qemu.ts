@@ -226,3 +226,38 @@ export const deleteIso = async (path: string): Promise<DeleteIsoResponse> => {
 
     return response.json();
 };
+
+export const uploadIsoFile = async (file: File): Promise<IsoResponse> => {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) throw new Error('Nicht authentifiziert');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        // API-Pfad anpassen um mit Backend übereinzustimmen
+        const response = await fetch('/api/qemu/iso/upload/file', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            // Besseres Error-Handling
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            } else {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Upload error:', error);
+        throw error;
+    }
+};

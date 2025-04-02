@@ -165,6 +165,13 @@
       "deleteConfirm": "Möchten Sie wirklich das ISO-Image \"{{name}}\" löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
       "deleteSuccess": "ISO-Image erfolgreich gelöscht",
       "deleteError": "Fehler beim Löschen des ISO-Images",
-      "deleteFailed": "Löschen fehlgeschlagen:"
+      "deleteFailed": "Löschen fehlgeschlagen:",
+      "fileUploadTitle": "ISO-Datei hochladen",
+      "fileUploadHelper": "Wählen Sie eine ISO-Datei von Ihrem Computer",
+      "fileUploading": "Upload läuft...",
+      "fileUploadButton": "Hochladen",
+      "uploadSuccess": "ISO-Datei erfolgreich hochgeladen",
+      "uploadError": "Fehler beim Hochladen der ISO-Datei",
+      "urlDownloadTitle": "Boot Image herunterladen"
     }
   }

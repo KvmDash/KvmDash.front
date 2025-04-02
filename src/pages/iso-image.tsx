@@ -25,16 +25,25 @@ import {
     DialogTitle,
 } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import { uploadIso, getIsoStatus, getIsoImages, deleteIso } from '@services/qemu';
+import { uploadIso, getIsoStatus, getIsoImages, deleteIso, uploadIsoFile } from '@services/qemu';
 import { IsoFile } from '@interfaces/qemu.types';
 
 const IsoImages: FC = (): ReactElement => {
     const { t } = useTranslation();
+    
+    // States für URL Upload
     const [isoUrl, setIsoUrl] = useState('');
     const [error, setError] = useState('');
     const [isUploading, setIsUploading] = useState(false);
     const [uploadStatus, setUploadStatus] = useState<string>('');
     const [downloadProgress, setDownloadProgress] = useState<boolean>(false);
+    
+    // States für File Upload
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [isFileUploading, setIsFileUploading] = useState(false);
+    const [fileUploadError, setFileUploadError] = useState('');
+    
+    // States für ISO Liste
     const [isoFiles, setIsoFiles] = useState<IsoFile[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; iso: IsoFile | null }>({
@@ -42,7 +51,7 @@ const IsoImages: FC = (): ReactElement => {
         iso: null
     });
 
-    // Status-Polling
+    // Status-Polling für URL Downloads
     useEffect(() => {
         let intervalId: NodeJS.Timeout;
 
@@ -71,7 +80,6 @@ const IsoImages: FC = (): ReactElement => {
         };
     }, [downloadProgress, t]);
 
-
     // Polling für ISO-Liste alle 15 Sekunden
     useEffect(() => {
         const loadIsoImages = async () => {
@@ -83,13 +91,8 @@ const IsoImages: FC = (): ReactElement => {
             }
         };
 
-        // Initial laden
         loadIsoImages();
-
-        // Polling alle 15 Sekunden
         const intervalId = setInterval(loadIsoImages, 15000);
-
-        // Cleanup beim Unmount
         return () => clearInterval(intervalId);
     }, [t]);
 
@@ -102,40 +105,42 @@ const IsoImages: FC = (): ReactElement => {
         return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
     };
 
-
-    // Dialog-Handler hinzufügen
-    const handleDeleteClick = (iso: IsoFile) => {
-        setDeleteDialog({ open: true, iso });
-    };
-
-    const handleDeleteCancel = () => {
-        setDeleteDialog({ open: false, iso: null });
-    };
-
-    const handleDeleteConfirm = async () => {
-        if (!deleteDialog.iso) return;
-
-        try {
-            setIsLoading(true);
-            await deleteIso(deleteDialog.iso.path);
-
-            // Aktualisiere die Liste nach erfolgreichem Löschen
-            const images = await getIsoImages();
-            setIsoFiles(images);
-
-            // Zeige Erfolgs-Nachricht
-            setUploadStatus(t('iso.deleteSuccess'));
-        } catch (error) {
-            console.error(t('iso.deleteFailed'), error);
-            setError(t('iso.deleteError'));
-        } finally {
-            setIsLoading(false);
-            setDeleteDialog({ open: false, iso: null });
+    // Handler für File Upload
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files[0]) {
+            setSelectedFile(event.target.files[0]);
+            setFileUploadError('');
         }
     };
 
+    const handleFileUpload = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedFile) return;
 
-    const handleSubmit = async (e: React.FormEvent): Promise<void> => {
+        try {
+            setIsFileUploading(true);
+            setFileUploadError('');
+            await uploadIsoFile(selectedFile);
+            
+            const images = await getIsoImages();
+            setIsoFiles(images);
+            
+            setSelectedFile(null);
+            if (e.target instanceof HTMLFormElement) {
+                e.target.reset();
+            }
+            
+            setUploadStatus(t('iso.uploadSuccess'));
+        } catch (err) {
+            console.error('Upload error:', err);
+            setFileUploadError(err instanceof Error ? err.message : t('iso.uploadError'));
+        } finally {
+            setIsFileUploading(false);
+        }
+    };
+
+    // Handler für URL Upload
+    const handleUrlSubmit = async (e: React.FormEvent): Promise<void> => {
         e.preventDefault();
         setError('');
 
@@ -160,12 +165,77 @@ const IsoImages: FC = (): ReactElement => {
         }
     };
 
+    // Handler für Delete Dialog
+    const handleDeleteClick = (iso: IsoFile) => {
+        setDeleteDialog({ open: true, iso });
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteDialog({ open: false, iso: null });
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!deleteDialog.iso) return;
+
+        try {
+            setIsLoading(true);
+            await deleteIso(deleteDialog.iso.path);
+
+            const images = await getIsoImages();
+            setIsoFiles(images);
+            setUploadStatus(t('iso.deleteSuccess'));
+        } catch (error) {
+            console.error(t('iso.deleteFailed'), error);
+            setError(t('iso.deleteError'));
+        } finally {
+            setIsLoading(false);
+            setDeleteDialog({ open: false, iso: null });
+        }
+    };
+
     return (
         <Box sx={{ flexGrow: 1, padding: 4, display: 'grid', gap: 4 }}>
+            {/* File Upload Card */}
             <Card>
-                <CardHeader title={t('iso.uploadTitle')} />
+                <CardHeader title={t('iso.fileUploadTitle')} />
                 <CardContent>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleFileUpload}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            <TextField
+                                type="file"
+                                inputProps={{
+                                    accept: '.iso'
+                                }}
+                                onChange={handleFileChange}
+                                disabled={isFileUploading}
+                                error={!!fileUploadError}
+                                helperText={fileUploadError || t('iso.fileUploadHelper')}
+                            />
+                            {isFileUploading && (
+                                <Box sx={{ width: '100%' }}>
+                                    <LinearProgress />
+                                    <Typography variant="body2" sx={{ mt: 1 }}>
+                                        {t('iso.fileUploading')}
+                                    </Typography>
+                                </Box>
+                            )}
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                disabled={!selectedFile || isFileUploading}
+                            >
+                                {isFileUploading ? t('iso.fileUploading') : t('iso.fileUploadButton')}
+                            </Button>
+                        </Box>
+                    </form>
+                </CardContent>
+            </Card>
+
+            {/* URL Upload Card */}
+            <Card>
+                <CardHeader title={t('iso.urlDownloadTitle')} />
+                <CardContent>
+                    <form onSubmit={handleUrlSubmit}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                             <TextField
                                 value={isoUrl}
@@ -200,6 +270,7 @@ const IsoImages: FC = (): ReactElement => {
                 </CardContent>
             </Card>
 
+            {/* ISO List Card */}
             <Card>
                 <CardHeader title={t('iso.availableImages')} />
                 <CardContent>
@@ -226,10 +297,7 @@ const IsoImages: FC = (): ReactElement => {
                                                 <IconButton
                                                     aria-label={t('common.delete')}
                                                     size="small"
-                                                    onClick={() => {
-                                                        console.log('Delete clicked for:', iso.name);
-                                                        handleDeleteClick(iso);
-                                                    }}
+                                                    onClick={() => handleDeleteClick(iso)}
                                                     sx={{
                                                         color: 'error.main',
                                                         '&:hover': {
@@ -252,6 +320,8 @@ const IsoImages: FC = (): ReactElement => {
                     )}
                 </CardContent>
             </Card>
+
+            {/* Delete Confirmation Dialog */}
             <Dialog
                 open={deleteDialog.open}
                 onClose={handleDeleteCancel}
