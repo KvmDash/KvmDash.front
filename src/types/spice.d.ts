@@ -23,7 +23,13 @@ declare module '@assets/spice-html5/src/main' {
         };
     }
 
+    export interface SpiceInputs {
+        state: string;
+    }
+
     export class SpiceMainConn {
+        inputs?: SpiceInputs;
+
         constructor(options: {
             uri: string;
             screen_id: string;
