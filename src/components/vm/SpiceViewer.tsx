@@ -1,6 +1,6 @@
-import { JSX, useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback, useImperativeHandle, forwardRef } from 'react';
 import { SpiceMainConn, SpiceAgent } from '@assets/spice-html5/src/main';
-//import { SpiceMainConn } from 'spice-html5/src/main';
+import { sendCtrlAltDel } from '@assets/spice-html5/src/inputs';
 
 interface SpiceViewerProps {
     host: string;
@@ -8,21 +8,24 @@ interface SpiceViewerProps {
     password?: string;
 }
 
-
+export interface SpiceViewerRef {
+    spiceConnection: SpiceMainConn | null;
+}
 
 const createSpiceDisplay = (container: HTMLDivElement): HTMLDivElement => {
     const display = document.createElement('div');
     display.id = 'spice-area';
     Object.assign(display.style, {
         position: 'absolute',
-        top: '50%',               // Vertikale Zentrierung
-        left: '50%',             // Horizontale Zentrierung
-        transform: 'translate(-50%, -50%)', // Perfekte Zentrierung
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
         width: '100%',
         height: '100%',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        zIndex: 1 // Expliziter z-Index für das Display
     });
     container.appendChild(display);
     return display;
@@ -46,15 +49,35 @@ const createMessageDiv = (container: HTMLDivElement): HTMLDivElement => {
     return messageDiv;
 };
 
-
-
-export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Element => {
+const SpiceViewer = forwardRef<SpiceViewerRef, SpiceViewerProps>(({ host, port, password }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const spiceConnectionRef = useRef<SpiceMainConn | null>(null);
     const renderLoopRef = useRef<number | undefined>(undefined); // Animation Frame Referenz
+
+    useImperativeHandle(ref, () => ({
+        get spiceConnection() {
+            console.log('SpiceConnection requested:', spiceConnectionRef.current);
+            return spiceConnectionRef.current;
+        }
+    }), []);  // Leere Dependencies, da wir nur die Ref weitergeben
+
+    const handleKeyboardShortcut = useCallback((e: KeyboardEvent) => {
+        // Nur aktiv wenn Spice verbunden ist
+        if (!spiceConnectionRef.current) return;
+
+        // STRG+ALT+ENTF
+        if (e.ctrlKey && e.altKey && e.key === 'Delete') {
+            e.preventDefault();
+            sendCtrlAltDel(spiceConnectionRef.current);
+        }
+    }, []);
+
     useEffect(() => {
+        window.addEventListener('keydown', handleKeyboardShortcut);
+        return () => window.removeEventListener('keydown', handleKeyboardShortcut);
+    }, [handleKeyboardShortcut]);
 
-
+    useEffect(() => {
         if (!containerRef.current) return;
 
         const container = containerRef.current;
@@ -121,23 +144,18 @@ export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Ele
                     let isConnected = false;
                 
                     const connectDisplay = (): ((display: HTMLElement) => boolean) => {
-                        // Erweiterte Prüfung für verschiedene Display-Server
                         if (typeof agent.connect_display === 'function') {
                             console.log('📺 Verwende direkten connect_display');
                             return agent.connect_display;
                         } else if (agent.main?.connect_display) {
                             console.log('📺 Verwende main.connect_display');
                             return agent.main.connect_display;
-                        } else if (agent.main?.agent?.connect_display) {
-                            console.log('📺 Verwende main.agent.connect_display');
-                            return agent.main.agent.connect_display;
                         }
-                
+
                         // Wenn keine Methode gefunden wurde, versuche display direkt zu verbinden
                         console.log('⚠️ Keine standard connect_display Methode gefunden');
                         return (display: HTMLElement) => {
                             if (agent.main) {
-                                // Versuche display direkt zu setzen
                                 agent.main.display = display;
                                 return true;
                             }
@@ -229,26 +247,24 @@ export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Ele
         };
     }, [host, port, password]);
 
-
-
     return (
         <div
             ref={containerRef}
             style={{
                 width: '100%',
-                height: '100%',           // Volle Höhe des Containers
-                aspectRatio: '16/9',      // 16:9 Seitenverhältnis
-                maxWidth: '1920px',       // Full HD Breite
-                maxHeight: '1080px',      // Full HD Höhe
+                height: '100%',
+                aspectRatio: '16/9',
+                maxWidth: '1920px',
+                maxHeight: '1080px',
                 border: '1px solid #ccc',
                 overflow: 'hidden',
                 backgroundColor: '#000',
                 position: 'relative',
                 margin: '0 auto',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
             }}
         />
     );
-};
+});
+
+SpiceViewer.displayName = 'SpiceViewer';
+export { SpiceViewer };

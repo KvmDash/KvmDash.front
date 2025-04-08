@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { getVmDetails, getSpiceConnection } from '../services/virtualization';
-import { SpiceViewer } from '../components/vm/SpiceViewer';
+import { SpiceViewer, SpiceViewerRef } from '../components/vm/SpiceViewer';
+import { sendCtrlAltDel } from '@assets/spice-html5/src/inputs';
 import type { VmStats } from '../types/vm.types';
 
-import { Box, Card, CardContent, CardHeader } from '@mui/material';
+import { Box, Card, CardContent, CardHeader, IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import DisplaySettingsIcon from '@mui/icons-material/DisplaySettings';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import VmMetrics from '../components/vm/VmMetrics';  
 import VmSnapshots from '../components/vm/VmSnapshots';  
 
@@ -20,6 +22,7 @@ export default function VmDetailsPage() {
     } | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const spiceViewerRef = useRef<SpiceViewerRef>(null);
 
     useEffect(() => {
         const initializeSpiceConnection = async () => {
@@ -58,9 +61,36 @@ export default function VmDetailsPage() {
                         <CardHeader
                             title="SPICE Remote Konsole"
                             avatar={<DisplaySettingsIcon color="primary" />}
+                            action={
+                                <IconButton
+                                    size="small"
+                                    onClick={() => {
+                                        const conn = spiceViewerRef.current?.spiceConnection;
+                                        console.log('Button clicked', {
+                                            ref: spiceViewerRef.current,
+                                            connection: conn,
+                                            hasInputs: !!conn?.inputs
+                                        });
+                                        if (conn) {
+                                            sendCtrlAltDel(conn);
+                                        } else {
+                                            console.warn('Keine SPICE Verbindung verfügbar');
+                                        }
+                                    }}
+                                    sx={{ 
+                                        color: 'action.active',
+                                        '&:hover': {
+                                            backgroundColor: 'action.hover'
+                                        }
+                                    }}
+                                >
+                                    <LockOpenIcon />
+                                </IconButton>
+                            }
                         />
-                        <CardContent>
+                        <CardContent sx={{ p: 1 }}>
                             <SpiceViewer
+                                ref={spiceViewerRef}
                                 host={spiceConnection.host}
                                 port={spiceConnection.wsPort}
                             />
