@@ -88,7 +88,7 @@ export default function VmDetailsPage() {
                                 </IconButton>
                             }
                         />
-                        <CardContent sx={{ p: 0 }}> {/* Padding entfernt */}
+                        <CardContent sx={{ p: 1 }}>
                             <SpiceViewer
                                 ref={spiceViewerRef}
                                 host={spiceConnection.host}
