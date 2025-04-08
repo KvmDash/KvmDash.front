@@ -1,14 +1,11 @@
 import { JSX, useEffect, useRef } from 'react';
 import { SpiceMainConn, SpiceAgent } from '@assets/spice-html5/src/main';
-//import { SpiceMainConn } from 'spice-html5/src/main';
 
 interface SpiceViewerProps {
     host: string;
     port: number;
     password?: string;
 }
-
-
 
 const createSpiceDisplay = (container: HTMLDivElement): HTMLDivElement => {
     const display = document.createElement('div');
@@ -46,15 +43,12 @@ const createMessageDiv = (container: HTMLDivElement): HTMLDivElement => {
     return messageDiv;
 };
 
-
-
 export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Element => {
     const containerRef = useRef<HTMLDivElement>(null);
     const spiceConnectionRef = useRef<SpiceMainConn | null>(null);
     const renderLoopRef = useRef<number | undefined>(undefined); // Animation Frame Referenz
+
     useEffect(() => {
-
-
         if (!containerRef.current) return;
 
         const container = containerRef.current;
@@ -121,23 +115,18 @@ export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Ele
                     let isConnected = false;
                 
                     const connectDisplay = (): ((display: HTMLElement) => boolean) => {
-                        // Erweiterte Prüfung für verschiedene Display-Server
                         if (typeof agent.connect_display === 'function') {
                             console.log('📺 Verwende direkten connect_display');
                             return agent.connect_display;
                         } else if (agent.main?.connect_display) {
                             console.log('📺 Verwende main.connect_display');
                             return agent.main.connect_display;
-                        } else if (agent.main?.agent?.connect_display) {
-                            console.log('📺 Verwende main.agent.connect_display');
-                            return agent.main.agent.connect_display;
                         }
-                
+
                         // Wenn keine Methode gefunden wurde, versuche display direkt zu verbinden
                         console.log('⚠️ Keine standard connect_display Methode gefunden');
                         return (display: HTMLElement) => {
                             if (agent.main) {
-                                // Versuche display direkt zu setzen
                                 agent.main.display = display;
                                 return true;
                             }
@@ -229,17 +218,15 @@ export const SpiceViewer = ({ host, port, password }: SpiceViewerProps): JSX.Ele
         };
     }, [host, port, password]);
 
-
-
     return (
         <div
             ref={containerRef}
             style={{
                 width: '100%',
-                height: '100%',           // Volle Höhe des Containers
-                aspectRatio: '16/9',      // 16:9 Seitenverhältnis
-                maxWidth: '1920px',       // Full HD Breite
-                maxHeight: '1080px',      // Full HD Höhe
+                height: '100%',
+                aspectRatio: '16/9',
+                maxWidth: '1920px',
+                maxHeight: '1080px',
                 border: '1px solid #ccc',
                 overflow: 'hidden',
                 backgroundColor: '#000',
